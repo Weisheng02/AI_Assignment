@@ -196,7 +196,7 @@
       ],
       "dialogflow": {
         "action": "programme.lookup",
-        "webhook_used": true,
+        "webhook_used": false,
         "webhook_for_slot_filling": false
       }
     },
@@ -852,7 +852,7 @@
       ],
       "dialogflow": {
         "action": "campus.service.lookup",
-        "webhook_used": true,
+        "webhook_used": false,
         "webhook_for_slot_filling": false
       }
     }

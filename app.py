@@ -561,7 +561,7 @@ with tab_info:
     - **Response Quality (g.ii)**: reported only when an independent reference-answer set is available; intent-template reuse is not counted as valid evidence.
     - **User Feedback (g.iii)**: analysed from the frozen, anonymized five-response Google Forms snapshot using item means, medians, and favorable rates.
     - **Dialogflow Integration**: embedded Messenger UI plus a reproducible Dialogflow ES export package.
-    - **Webhook Extension**: an optional parameter-aware Dialogflow webhook with an official-source allowlist.
+    - **Parameter Extension**: custom entities, eight parameters, required-slot prompting, and controlled static responses without external webhook dependencies.
     - **Multi-Model Support**: Member 1 (Dialogflow Platform) + Member 2 (Python ML Pipeline).
     - **Continuous Active Learning Loop**: Automatic logging and admin GUI for incremental dataset expansion or discarding.
     - **Sentiment & Urgency Analysis**: Automatic classification of student query urgency and emotional tone.

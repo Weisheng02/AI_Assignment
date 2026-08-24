@@ -4,7 +4,7 @@ BMCS Artificial Intelligence assignment, Topic 5: Chatbot Development.
 
 The prototype compares two independently implemented approaches to the same university FAQ scenario:
 
-1. **Member 1 - Google Dialogflow ES platform:** an importable agent configuration with intents, entities, parameters, responses, fallback handling, and optional webhook fulfilment.
+1. **Member 1 - Google Dialogflow ES platform:** an importable agent configuration with intents, entities, eight parameters, required-slot prompting, static responses, and fallback handling.
 2. **Member 2 - local machine learning:** a Python pipeline using character-boundary TF-IDF features (3-5 character n-grams) and balanced Logistic Regression with a confidence threshold and a reviewed-query log.
 
 > Replace the member placeholders in the final report with the real names and student IDs before submission.
@@ -61,11 +61,9 @@ Generated evaluation data is written under `data/`. The automated probe contains
 
 1. Create a Dialogflow ES agent using English and the `Asia/Kuala_Lumpur` time zone.
 2. Import `dialogflow_agent.zip` from **Settings -> Export and Import -> Import from ZIP**.
-3. Review the custom entities, parameters, welcome/fallback intents, and webhook settings.
-4. Configure the fulfilment URL only if a webhook service is available; keep static responses as a safe fallback.
+3. Review the custom entities, parameters, required prompt, and welcome/fallback intents.
+4. Confirm that webhook fulfillment remains disabled; this submission uses controlled static responses.
 5. Capture screenshots of the imported intents/entities and a real test-console conversation for the presentation/report evidence appendix.
-
-An optional parameter-aware webhook implementation is included in `src/dialogflow_webhook.py`. Test it locally with `python src/dialogflow_webhook.py`, then deploy it behind HTTPS and configure `/dialogflow-webhook` in Dialogflow ES before claiming live fulfillment. The code returns official programme, intake, and contact-directory links and does not contain credentials.
 
 The export package proves that the configuration is reproducible; it does not by itself prove that a cloud agent was deployed or tested.
 
@@ -74,7 +72,6 @@ The export package proves that the configuration is reproducible; it does not by
 - `app.py` - Streamlit interface, benchmark dashboard, feedback form, and protected review UI.
 - `src/ml_model.py` - local character TF-IDF + Logistic Regression classifier.
 - `src/dialogflow_client.py` - explicitly labelled offline/train-only matching baseline.
-- `src/dialogflow_webhook.py` - parameter-aware Dialogflow ES fulfillment endpoint with an official-source allowlist.
 - `evaluate.py` - leakage-free stratified evaluation and exported metrics.
 - `auto_tester.py` - labelled regression/health probes.
 - `data/intents.json` - curated intent patterns and controlled responses.

@@ -46,35 +46,22 @@ The `service` slot is required in `campus_service_lookup`. A query such as "I
 need help from a campus service" should therefore prompt the user to select a
 service.
 
-## Fulfillment design
+## Static-response and slot-filling design
 
-Two intents intentionally have fulfillment enabled in their intent JSON:
+This submission deliberately does **not** use webhook fulfillment. All intents
+return controlled static responses, so the imported agent has no external
+service, credential, deployment, or network dependency.
 
-- `course`, action `programme.lookup`, parameters `programme` and `intake`.
-  Intended use: query a maintained programme catalogue and return the official
-  programme URL for the requested intake.
-- `campus_service_lookup`, action `campus.service.lookup`, required parameter
-  `service` and optional parameter `contact_channel`. Intended use: return the
-  current official department contact in the requested channel.
+- `course` extracts optional `programme` and `intake` parameters and returns a
+  controlled response containing the official programme finder.
+- `campus_service_lookup` extracts required `service` and optional
+  `contact_channel`. When `service` is absent, Dialogflow prompts the user to
+  choose a campus service before returning the official contact-directory link.
 
-The ZIP does **not** contain credentials, a deployed function or a webhook URL.
-The agent-level webhook is deliberately blank. A tested, framework-free handler
-is supplied in `src/dialogflow_webhook.py`; it supports `programme.lookup` and
-`campus.service.lookup` and returns only allowlisted official-source links.
-Before demonstrating live fulfillment:
-
-1. Run `python src/dialogflow_webhook.py` for a local test, then deploy the same
-   handler behind a public HTTPS endpoint.
-2. Validate the `queryResult.action` and allow only the actions above.
-3. Read parameters from `queryResult.parameters`.
-4. Retrieve data only from a maintained official-source allowlist.
-5. Confirm the response contains `fulfillmentText` and the official source URL.
-6. Configure the endpoint under **Fulfillment**, save it, and test both success
-   and failure paths. The static intent response is the safe fallback if the
-   webhook is unavailable.
-
-Google's fulfillment documentation:
-https://cloud.google.com/dialogflow/es/docs/fulfillment-overview
+After import, confirm that **Enable webhook call for this intent** is off. The
+parameters, entity annotations, required-slot prompt, welcome/fallback handling,
+and official-source static responses are the platform extensions demonstrated
+for this assignment.
 
 ## Local reproducibility and validation
 
@@ -89,8 +76,8 @@ python3 -m json.tool data/entities.json >/dev/null
 
 The exporter fails before replacement if it finds a duplicate normalized
 training phrase, duplicate tag/entity, missing response, unknown entity
-reference, required slot without a prompt, missing WELCOME event, no
-parameterized webhook intent, corrupt JSON, or an incomplete ZIP structure.
+reference, required slot without a prompt, enabled webhook call, missing WELCOME
+event, corrupt JSON, or an incomplete ZIP structure.
 
 ## Cloud evidence checklist
 
@@ -101,7 +88,8 @@ After a real ES import, capture dated screenshots or screen recordings of:
 3. `Default Welcome Intent` showing the WELCOME event and a successful welcome
    invocation.
 4. `Default Fallback Intent` responding to at least two out-of-scope phrases.
-5. `course` showing its action, parameters, annotations and fulfillment toggle.
+5. `course` showing its action, parameters, annotations, static response, and
+   disabled webhook toggle.
 6. `campus_service_lookup` showing required slot filling, extracted `service`
    and optional `contact_channel`.
 7. `transport` correctly routing bus, shuttle, route and timetable queries to
@@ -109,9 +97,7 @@ After a real ES import, capture dated screenshots or screen recordings of:
 8. `assessment_rules` correctly routing passing-mark, grading and result-review
    questions to the Student Intranet/official Examination FAQ without claiming
    one universal passing mark.
-9. A fulfillment request/response log only after an HTTPS webhook is actually
-   deployed, with secrets and personal data redacted.
-10. A test table containing query, expected intent, matched intent, confidence,
+9. A test table containing query, expected intent, matched intent, confidence,
    extracted parameters, response, date and pass/fail result.
 
 ## Evidence boundary
@@ -119,6 +105,6 @@ After a real ES import, capture dated screenshots or screen recordings of:
 Local checks prove JSON validity, archive integrity, deterministic package
 structure, intent/entity counts, parameter wiring and entity annotations. They
 do **not** prove that Google accepted the import, trained the cloud model,
-called a webhook, or produced a particular cloud confidence score. Do not label
+or produced a particular cloud confidence score. Do not label
 local simulator results as a live Dialogflow test. Cloud claims require the
 dated evidence listed above.

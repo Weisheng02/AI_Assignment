@@ -31,7 +31,7 @@ Evidence boundary  All reported model values are read from data/evaluation_resul
 | Output | AI Report - Final.docx |
 | Evaluation source | data/evaluation_results.json |
 | Evaluation generated at | 2026-08-24T18:02:56.633862 |
-| Document built at | 2026-08-24T20:11:04+08:00 |
+| Document built at | 2026-08-24T20:25:35+08:00 |
 | Identifying details | Member names, IDs, tutorial group, and tutor remain [TO BE PROVIDED]. |
 
 ## Report map
@@ -209,7 +209,7 @@ The preprocessing is deterministic and shared by the local classifier and local 
 
 ### 3.5.1 Member 1: Dialogflow ES configuration and local evaluation surrogate
 
-Member 1's platform approach is represented by Dialogflow ES configuration artifacts, including intents, training phrases, four custom entities, structured parameters, controlled responses, and two webhook-enabled actions. The tested handler in src/dialogflow_webhook.py validates Dialogflow ES V2 requests and returns parameter-aware links from an official-source allowlist for programme and campus-service lookups. A public HTTPS deployment and authenticated Dialogflow request log are still required before claiming live fulfillment. The repository also contains DialogflowSimulatorClient, a transparent local pattern/Jaccard implementation used solely for offline, train-only evaluation. This simulator is reproducible but is not Google's model and provides no evidence of cloud accuracy.
+Member 1's platform approach is represented by Dialogflow ES configuration artifacts, including intents, training phrases, four custom entities, eight structured parameters, entity annotations, required-slot prompting, controlled static responses, and welcome/fallback handling. Webhook fulfillment is disabled by design, avoiding an external deployment dependency during the assessed demonstration. The repository also contains DialogflowSimulatorClient, a transparent local pattern/Jaccard implementation used solely for offline, train-only evaluation. This simulator is reproducible but is not Google's model and provides no evidence of cloud accuracy.
 
 ### 3.5.2 Member 2: TF-IDF and Logistic Regression
 
@@ -445,7 +445,6 @@ The intent phrases and response templates are stored in data/intents.json and ar
 | Transport | https://www.tarc.edu.my/dsa/a/transportation/university-college-bus-service/ | response_quality_test.json |
 | Assessment Rules | https://examination.tarc.edu.my/examination-services/faqs | response_quality_test.json |
 | Setup/Documentation Source | https://cloud.google.com/dialogflow/es/docs/agents-settings | docs/dialogflow_setup.md |
-| Setup/Documentation Source | https://cloud.google.com/dialogflow/es/docs/fulfillment-overview | docs/dialogflow_setup.md |
 
 *Table 15: Software and artifact acknowledgement*
 
@@ -455,7 +454,7 @@ The intent phrases and response templates are stored in data/intents.json and ar
 | NLTK | Lemmatisation and optional BLEU token processing | src/preprocessing.py; evaluate.py |
 | scikit-learn | TF-IDF, Logistic Regression, Naïve Bayes, SVM, metrics, split, cross-validation | src/ml_model.py; model_selection.py; evaluate.py; data/model_selection_results.json |
 | Streamlit | Interactive prototype interface | app.py |
-| Dialogflow ES | Platform configuration, parameterized fulfillment, and integration track | dialogflow_agent.zip; src/dialogflow_webhook.py; docs/dialogflow_setup.md |
+| Dialogflow ES | Platform configuration, entities, parameter prompting, controlled static responses, and fallback handling | dialogflow_agent.zip; data/entities.json; docs/dialogflow_setup.md |
 | Repository data | Intent patterns, feedback, tests, evaluation results | data/ directory |
 
 # Appendix A. Contribution record and prototype evidence
@@ -466,7 +465,7 @@ Member verification required  The responsibilities below reflect the repository'
 
 | Member | Proposed responsibility record | Evidence to attach | Confirmation |
 | --- | --- | --- | --- |
-| Member 1 [TO BE PROVIDED] | Dialogflow ES intent/entity/response configuration; parameterized webhook handler; exported agent artifact; train-only simulator integration | Export timestamp; webhook test; authentic console/API test; meeting log | Member initials/date: __________ |
+| Member 1 [TO BE PROVIDED] | Dialogflow ES intent/entity/response configuration; parameter annotations and required-slot prompting; exported agent artifact; train-only simulator integration | Export timestamp; parameter-prompt test; authentic console/API test; meeting log | Member initials/date: __________ |
 | Member 2 [TO BE PROVIDED] | NLTK preprocessing; character-boundary TF-IDF (3–5) + balanced Logistic Regression (C=30) pipeline; confidence gate; model selection; local evaluation and UI integration | Commit/version history; model-selection artifact; test output; code walkthrough; meeting log | Member initials/date: __________ |
 | Shared | Problem framing; dataset review; literature synthesis; error analysis; final QA and demonstration | Minutes, review notes, rehearsal checklist | Both initials/date: __________ |
 
@@ -518,7 +517,7 @@ python src/create_dialogflow_zip.py
 
 python tools/build_final_report.py
 
-Evaluation artifact: evaluation_results.json generated at 2026-08-24T18:02:56.633862. Builder output generated at 2026-08-24T20:11:04+08:00.
+Evaluation artifact: evaluation_results.json generated at 2026-08-24T18:02:56.633862. Builder output generated at 2026-08-24T20:25:35+08:00.
 
 # Appendix C. Verified user-satisfaction instrument and data
 

@@ -1283,7 +1283,7 @@ def build_report():
     add_heading(document, "3.5.1 Member 1: Dialogflow ES configuration and local evaluation surrogate", level=3)
     add_paragraph(
         document,
-        "Member 1's platform approach is represented by Dialogflow ES configuration artifacts, including intents, training phrases, four custom entities, structured parameters, controlled responses, and two webhook-enabled actions. The tested handler in src/dialogflow_webhook.py validates Dialogflow ES V2 requests and returns parameter-aware links from an official-source allowlist for programme and campus-service lookups. A public HTTPS deployment and authenticated Dialogflow request log are still required before claiming live fulfillment. The repository also contains DialogflowSimulatorClient, a transparent local pattern/Jaccard implementation used solely for offline, train-only evaluation. This simulator is reproducible but is not Google's model and provides no evidence of cloud accuracy.",
+        "Member 1's platform approach is represented by Dialogflow ES configuration artifacts, including intents, training phrases, four custom entities, eight structured parameters, entity annotations, required-slot prompting, controlled static responses, and welcome/fallback handling. Webhook fulfillment is disabled by design, avoiding an external deployment dependency during the assessed demonstration. The repository also contains DialogflowSimulatorClient, a transparent local pattern/Jaccard implementation used solely for offline, train-only evaluation. This simulator is reproducible but is not Google's model and provides no evidence of cloud accuracy.",
     )
     add_heading(document, "3.5.2 Member 2: TF-IDF and Logistic Regression", level=3)
     add_paragraph(
@@ -1640,7 +1640,7 @@ def build_report():
             ("NLTK", "Lemmatisation and optional BLEU token processing", "src/preprocessing.py; evaluate.py"),
             ("scikit-learn", "TF-IDF, Logistic Regression, Naïve Bayes, SVM, metrics, split, cross-validation", "src/ml_model.py; model_selection.py; evaluate.py; data/model_selection_results.json"),
             ("Streamlit", "Interactive prototype interface", "app.py"),
-            ("Dialogflow ES", "Platform configuration, parameterized fulfillment, and integration track", "dialogflow_agent.zip; src/dialogflow_webhook.py; docs/dialogflow_setup.md"),
+            ("Dialogflow ES", "Platform configuration, entities, parameter prompting, controlled static responses, and fallback handling", "dialogflow_agent.zip; data/entities.json; docs/dialogflow_setup.md"),
             ("Repository data", "Intent patterns, feedback, tests, evaluation results", "data/ directory"),
         ],
         [1850, 3850, 3660],
@@ -1655,7 +1655,7 @@ def build_report():
         document,
         ["Member", "Proposed responsibility record", "Evidence to attach", "Confirmation"],
         [
-            ("Member 1\n[TO BE PROVIDED]", "Dialogflow ES intent/entity/response configuration; parameterized webhook handler; exported agent artifact; train-only simulator integration", "Export timestamp; webhook test; authentic console/API test; meeting log", "Member initials/date: __________"),
+            ("Member 1\n[TO BE PROVIDED]", "Dialogflow ES intent/entity/response configuration; parameter annotations and required-slot prompting; exported agent artifact; train-only simulator integration", "Export timestamp; parameter-prompt test; authentic console/API test; meeting log", "Member initials/date: __________"),
             ("Member 2\n[TO BE PROVIDED]", "NLTK preprocessing; character-boundary TF-IDF (3–5) + balanced Logistic Regression (C=30) pipeline; confidence gate; model selection; local evaluation and UI integration", "Commit/version history; model-selection artifact; test output; code walkthrough; meeting log", "Member initials/date: __________"),
             ("Shared", "Problem framing; dataset review; literature synthesis; error analysis; final QA and demonstration", "Minutes, review notes, rehearsal checklist", "Both initials/date: __________"),
         ],

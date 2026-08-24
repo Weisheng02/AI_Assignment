@@ -2,7 +2,7 @@
 
 The local classifier consumes ``data/intents.json`` directly.  Dialogflow-only
 metadata in that file is optional and is translated here into ES intent,
-parameter, entity, welcome, fallback, and fulfillment settings.
+parameter, entity, welcome, fallback, and static-response settings.
 """
 
 from __future__ import annotations
@@ -174,14 +174,17 @@ def _validate_source_data(
         raise ValueError(
             f"Exactly one intent must handle the WELCOME event; found {welcome_intents}"
         )
-    if webhook_intents < 1:
-        raise ValueError("At least one intent must enable webhook fulfillment")
+    if webhook_intents:
+        raise ValueError(
+            "This submission uses static Dialogflow responses; webhook fulfillment "
+            "must remain disabled"
+        )
     if not any(
-        intent.get("dialogflow", {}).get("webhook_used")
-        and intent.get("parameters")
+        parameter.get("required") and parameter.get("prompts")
         for intent in intents
+        for parameter in intent.get("parameters", [])
     ):
-        raise ValueError("A webhook intent with structured parameters is required")
+        raise ValueError("At least one required parameter with a prompt is required")
 
     return {
         "intents": len(intents),
@@ -521,8 +524,8 @@ def _validate_archive(
             raise ValueError("Archive must contain exactly one Default Welcome Intent")
         if sum(intent.get("fallbackIntent") is True for intent in intents) != 1:
             raise ValueError("Archive must contain exactly one fallback intent")
-        if sum(intent.get("webhookUsed") is True for intent in intents) < 1:
-            raise ValueError("Archive contains no webhook-enabled intent")
+        if any(intent.get("webhookUsed") is True for intent in intents):
+            raise ValueError("Archive must not contain webhook-enabled intents")
 
         annotated_segments = 0
         for name in usersays_files:
@@ -617,7 +620,7 @@ def build_dialogflow_zip() -> Dict[str, int]:
         f"responses={result['responses']}\n"
         f"  custom entities={result['entities']}, "
         f"entity values={result['entity_values']}, parameters={result['parameters']}\n"
-        f"  webhook intents={result['webhook_intents']}, "
+        f"  webhook intents={result['webhook_intents']} (disabled by design), "
         f"annotated phrases={result['annotated_phrases']}, "
         f"ZIP members={result['zip_members']}"
     )
