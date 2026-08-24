@@ -21,9 +21,20 @@ Formal user-satisfaction results are read only from the frozen, anonymized Googl
 
 Use Python 3.9 or newer.
 
+macOS/Linux:
+
 ```bash
 python -m venv .venv
 source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+Windows PowerShell:
+
+```powershell
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
@@ -40,6 +51,13 @@ Set an administrator PIN before enabling active-learning mutations:
 
 ```bash
 export CHATBOT_ADMIN_PIN='choose-a-demo-pin'
+streamlit run app.py
+```
+
+On Windows PowerShell, the equivalent commands are:
+
+```powershell
+$env:CHATBOT_ADMIN_PIN='choose-a-demo-pin'
 streamlit run app.py
 ```
 
