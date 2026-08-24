@@ -176,11 +176,22 @@ class EvaluationTests(unittest.TestCase):
     def test_missing_survey_returns_na_instead_of_hardcoded_scores(self):
         with tempfile.TemporaryDirectory() as directory:
             missing_path = str(Path(directory) / "missing-feedback.json")
-            with patch("evaluate.FEEDBACK_PATH", missing_path):
-                survey = get_user_satisfaction_metrics()
+            survey = get_user_satisfaction_metrics(missing_path)
         self.assertTrue(survey["Mean Rating (1-5)"].isna().all())
-        self.assertEqual(set(survey["Satisfaction Rate"]), {"N/A"})
+        self.assertEqual(set(survey["Favorable Rate (4-5)"]), {"N/A"})
         self.assertEqual(set(survey["Respondents"]), {0})
+
+    def test_verified_survey_summary_uses_observed_scores(self):
+        survey = get_user_satisfaction_metrics()
+        self.assertEqual(set(survey["Respondents"]), {5})
+        self.assertEqual(
+            list(survey["Mean Rating (1-5)"]),
+            [4.0, 4.0, 3.8, 3.6, 3.4],
+        )
+        self.assertEqual(
+            list(survey["Favorable Rate (4-5)"]),
+            ["80.0%", "80.0%", "60.0%", "60.0%", "60.0%"],
+        )
 
     def test_saved_json_uses_null_not_nan(self):
         with tempfile.TemporaryDirectory() as directory:

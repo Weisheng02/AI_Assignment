@@ -43,7 +43,7 @@ ORIGINAL_REPORT = ROOT / "AI Report.docx"
 
 EVALUATION_PATH = DATA_DIR / "evaluation_results.json"
 INTENTS_PATH = DATA_DIR / "intents.json"
-FEEDBACK_PATH = DATA_DIR / "user_feedback.json"
+FEEDBACK_PATH = DATA_DIR / "user_feedback_verified.json"
 RESPONSE_TEST_PATH = DATA_DIR / "response_quality_test.json"
 MODEL_SELECTION_PATH = DATA_DIR / "model_selection_results.json"
 LATEST_TEST_RESULTS_PATH = DATA_DIR / "latest_test_results.json"
@@ -62,6 +62,14 @@ PALE_GOLD = "FFF6DD"
 PALE_RED = "FCECEA"
 WHITE = "FFFFFF"
 TABLE_WIDTH_DXA = 9360
+
+SURVEY_FIELDS = (
+    ("intent_accuracy", "Intent understanding", "The chatbot correctly understands student inquiry questions and intent."),
+    ("response_quality", "Answer clarity and relevance", "The chatbot's answers are clear, informative, and relevant to university procedures."),
+    ("ui_navigability", "Interface usability", "The web user interface (Streamlit GUI) is easy to navigate and chat with."),
+    ("response_speed", "Response speed", "The chatbot responds promptly without noticeable delay."),
+    ("overall_satisfaction", "Overall satisfaction", "Overall, I am satisfied with the automated university inquiry chatbot system."),
+)
 
 
 def load_json(path: Path, default):
@@ -323,7 +331,7 @@ def create_error_chart(path: Path, matrices, model_names):
     plt.close(fig)
 
 
-def generate_assets(intents, evaluation):
+def generate_assets(intents, evaluation, survey):
     ASSET_DIR.mkdir(parents=True, exist_ok=True)
     extract_logo()
     paths = {
@@ -332,6 +340,7 @@ def generate_assets(intents, evaluation):
         "metrics": ASSET_DIR / "model_metrics.png",
         "coverage": ASSET_DIR / "coverage_fallback.png",
         "errors": ASSET_DIR / "confusion_error_analysis.png",
+        "survey": ASSET_DIR / "survey_results.png",
         "app_screenshot": ASSET_DIR / "app_chatbot_e2e.png",
     }
     create_architecture_chart(paths["architecture"])
@@ -349,6 +358,7 @@ def generate_assets(intents, evaluation):
     while len(names) < 2:
         names.append(names[0] if names else "Unavailable")
     create_error_chart(paths["errors"], matrices, names[:2])
+    create_survey_chart(paths["survey"], survey)
     return paths
 
 
@@ -798,17 +808,62 @@ def add_reference(document, text):
     add_paragraph(document, text, style="Reference")
 
 
-def count_feedback_ratings(records):
-    ratings = []
+def summarise_survey(records):
+    """Validate the five-item instrument and return descriptive statistics."""
+    validated = []
     for record in records:
         if not isinstance(record, dict):
             continue
-        for key, value in record.items():
-            if "rating" in str(key).lower() or "score" in str(key).lower():
-                number = safe_float(value)
-                if number is not None and 1 <= number <= 5:
-                    ratings.append(number)
-    return ratings
+        row = {}
+        for key, _, _ in SURVEY_FIELDS:
+            value = record.get(key)
+            if isinstance(value, bool) or not isinstance(value, int) or not 1 <= value <= 5:
+                raise ValueError(f"Invalid verified survey rating for {key}: {value!r}")
+            row[key] = value
+        validated.append(row)
+
+    items = []
+    flattened = []
+    for key, label, statement in SURVEY_FIELDS:
+        values = [row[key] for row in validated]
+        flattened.extend(values)
+        items.append({
+            "key": key,
+            "label": label,
+            "statement": statement,
+            "mean": float(np.mean(values)) if values else None,
+            "median": float(np.median(values)) if values else None,
+            "favorable_count": sum(value >= 4 for value in values),
+            "favorable_rate": (sum(value >= 4 for value in values) / len(values)) if values else None,
+        })
+    return {
+        "respondent_count": len(validated),
+        "rating_count": len(flattened),
+        "overall_mean": float(np.mean(flattened)) if flattened else None,
+        "overall_median": float(np.median(flattened)) if flattened else None,
+        "overall_favorable_count": sum(value >= 4 for value in flattened),
+        "overall_favorable_rate": (sum(value >= 4 for value in flattened) / len(flattened)) if flattened else None,
+        "items": items,
+    }
+
+
+def create_survey_chart(path: Path, survey):
+    labels = [item["label"] for item in survey["items"]]
+    means = [item["mean"] for item in survey["items"]]
+    favorable = [item["favorable_rate"] for item in survey["items"]]
+    fig, ax = plt.subplots(figsize=(10.8, 6.2))
+    bars = ax.barh(labels[::-1], means[::-1], color=f"#{TEAL}")
+    ax.set_xlim(0, 5)
+    ax.set_xlabel("Mean rating (1-5)")
+    ax.set_title("Verified five-item usability survey (N=5)", loc="left", fontsize=16, weight="bold", color=f"#{NAVY}")
+    ax.grid(axis="x", alpha=0.18)
+    ax.spines[["top", "right", "left"]].set_visible(False)
+    for bar, mean, rate in zip(bars, means[::-1], favorable[::-1]):
+        ax.text(mean + 0.06, bar.get_y() + bar.get_height() / 2,
+                f"{mean:.1f}  |  {rate * 100:.0f}% favorable", va="center", fontsize=9)
+    fig.text(0.01, 0.01, "Favorable = rating 4 or 5. Descriptive evidence only; small sample.", fontsize=8.5, color=f"#{MID_GREY}")
+    fig.savefig(path, dpi=220, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
 
 
 def source_rows(response_payload, optional_notes):
@@ -840,7 +895,6 @@ def build_report():
 
     if not evaluation.get("results"):
         raise RuntimeError(f"No evaluation results found in {EVALUATION_PATH}")
-    assets = generate_assets(intents, evaluation)
     results = evaluation["results"]
     details = evaluation.get("details", {})
     methodology = details.get("methodology", {})
@@ -855,7 +909,10 @@ def build_report():
     median_intent_patterns = float(np.median(intent_pattern_counts)) if intent_pattern_counts else 0.0
     maximum_intent_patterns = max(intent_pattern_counts, default=0)
     feedback_records = feedback if isinstance(feedback, list) else []
-    rating_values = count_feedback_ratings(feedback_records)
+    survey = summarise_survey(feedback_records)
+    if survey["respondent_count"] == 0:
+        raise RuntimeError("The verified survey snapshot is empty")
+    assets = generate_assets(intents, evaluation, survey)
     response_cases = as_records(response_payload)
     model_selection_rows = model_selection.get("results", []) if isinstance(model_selection, dict) else []
     selected_candidate = model_selection.get("selected_candidate", "not recorded") if isinstance(model_selection, dict) else "not recorded"
@@ -967,7 +1024,7 @@ def build_report():
     add_callout(
         document,
         "Evidence boundary",
-        "All reported model values are read from data/evaluation_results.json. Member 1 values describe a local, train-only Dialogflow-style simulator and are not cloud Dialogflow metrics. No user-satisfaction percentage is claimed. BLEU and ROUGE remain N/A unless the evaluation artifact contains scores derived from independent reference answers.",
+        "All reported model values are read from data/evaluation_results.json. Member 1 values describe a local, train-only Dialogflow-style simulator and are not cloud Dialogflow metrics. Survey results are read from the anonymized Google Forms snapshot in data/user_feedback_verified.json; favorable means a rating of 4 or 5. BLEU and ROUGE are reported only when the evaluation artifact contains scores derived from independent reference answers.",
         tone="gold",
     )
     add_caption(document, "Table 1: Document control")
@@ -1009,8 +1066,7 @@ def build_report():
     response_status = str(field(member2, "Response Quality Status") or methodology.get("response_quality") or "N/A")
     add_paragraph(
         document,
-        f"Response-generation scoring status is {response_status}. The verified feedback file contains {len(feedback_records)} record(s); therefore user-satisfaction findings are "
-        + (f"reported descriptively from {len(rating_values)} recorded 1–5 ratings." if feedback_records and rating_values else "N/A at this snapshot. Appendix C supplies the survey instrument and analysis protocol for a future genuine study."),
+        f"Response-generation scoring status is {response_status}. The verified usability survey contains {survey['respondent_count']} anonymous response(s) and {survey['rating_count']} item ratings. The five-item mean is {survey['overall_mean']:.2f}/5 and {survey['overall_favorable_count']}/{survey['rating_count']} ratings ({survey['overall_favorable_rate'] * 100:.1f}%) are favorable (4 or 5). These are preliminary descriptive findings because N=5 is too small for generalisation.",
     )
     add_heading(document, "Rubric traceability", level=2)
     add_caption(document, "Table 2: Documentation-rubric traceability")
@@ -1062,7 +1118,7 @@ def build_report():
         "Represent two distinct member approaches: a Dialogflow ES agent configuration and an offline Python intent classifier.",
         "Implement the local classifier with deterministic preprocessing, character-boundary TF-IDF features, balanced Logistic Regression, confidence gating, and fallback logging.",
         "Evaluate intent recognition on a fixed stratified held-out split using accuracy, weighted precision, weighted recall, weighted F1, coverage, fallback rate, and confusion analysis.",
-        "Define valid protocols for response quality and user satisfaction, and report N/A until independent evidence is available.",
+        "Evaluate response quality using independent references and analyse genuine user-satisfaction responses with transparent descriptive rules.",
         "Deliver reproducible source code, evaluation artifacts, charts, and documentation that can be regenerated from the repository.",
     ])
 
@@ -1140,7 +1196,7 @@ def build_report():
             ("Different member solutions", "Member 1 configuration/simulator track; Member 2 TF-IDF + LR track", "Contribution ownership must be confirmed"),
             ("Intent-recognition testing", "Leakage-free split, four-model metrics, confusion analysis", "Measured"),
             ("Response relevancy/quality", "Independent-reference protocol", f"{'Measured from ' + str(len(response_cases)) + ' cases' if has_response_metrics else 'N/A unless evaluation JSON contains scores'}"),
-            ("User satisfaction", "Appendix C instrument and analysis plan", f"N/A; {len(feedback_records)} verified record(s) currently"),
+            ("User satisfaction", "Five-item Google Forms instrument; verified anonymous snapshot; Section 4.4 and Appendix C", f"Measured descriptively; N={survey['respondent_count']}"),
         ],
         [2300, 4460, 2600],
         font_size=8.6,
@@ -1227,7 +1283,7 @@ def build_report():
     add_heading(document, "3.5.1 Member 1: Dialogflow ES configuration and local evaluation surrogate", level=3)
     add_paragraph(
         document,
-        "Member 1's platform approach is represented by Dialogflow ES configuration artifacts, including intents, training phrases, entities where applicable, and controlled responses. The repository also contains DialogflowSimulatorClient, a transparent local pattern/Jaccard implementation used solely for offline, train-only evaluation. For each held-out query, it checks exact matches against training examples and otherwise selects the training pattern with the highest token-set similarity, with a small substring boost. This method is reproducible but is not Google's model and provides no evidence of cloud accuracy.",
+        "Member 1's platform approach is represented by Dialogflow ES configuration artifacts, including intents, training phrases, four custom entities, structured parameters, controlled responses, and two webhook-enabled actions. The tested handler in src/dialogflow_webhook.py validates Dialogflow ES V2 requests and returns parameter-aware links from an official-source allowlist for programme and campus-service lookups. A public HTTPS deployment and authenticated Dialogflow request log are still required before claiming live fulfillment. The repository also contains DialogflowSimulatorClient, a transparent local pattern/Jaccard implementation used solely for offline, train-only evaluation. This simulator is reproducible but is not Google's model and provides no evidence of cloud accuracy.",
     )
     add_heading(document, "3.5.2 Member 2: TF-IDF and Logistic Regression", level=3)
     add_paragraph(
@@ -1281,7 +1337,7 @@ def build_report():
         "Multinomial Naïve Bayes with alpha = 1.0 and a unigram TF-IDF representation provides a probabilistic lexical baseline. Linear SVM with C = 0.1, max_iter = 1000, random_state = 42, and unigram TF-IDF provides a margin-based baseline. The baselines do not generate responses and are therefore N/A for BLEU/ROUGE.",
     )
 
-    add_heading(document, "3.6 Evaluation protocol and metrics", level=2, page_break=True)
+    add_heading(document, "3.6 Evaluation protocol and metrics", level=2)
     add_caption(document, "Table 7: Evaluation protocol")
     add_table(
         document,
@@ -1305,7 +1361,7 @@ def build_report():
         else "The current evaluation artifact records no response-overlap scores, so the status remains N/A until evaluation is rerun and validation passes."
     )
     add_paragraph(document, f"For response quality, the protocol uses human-authored reference answers anchored to official TAR UMT sources. Corpus BLEU and mean ROUGE-1 F1 may be computed only after those references are independent of the candidate-selection templates. The repository currently contains {len(response_cases)} reference case(s), and the report uses only scores present in evaluation_results.json. {response_metric_sentence}")
-    add_paragraph(document, f"For usability, Appendix C defines a five-point Likert instrument and open-ended questions. The verified feedback artifact currently contains {len(feedback_records)} record(s). No respondent count, satisfaction percentage, or inferential claim is invented.")
+    add_paragraph(document, f"For usability, the Google Form uses five Likert statements rated from 1 (strongly disagree) to 5 (strongly agree). The verified artifact contains {survey['respondent_count']} anonymous responses collected from 12 to 24 August 2026. The report presents item means, medians, and the predeclared favorable rate (ratings of 4 or 5). No inferential or representative claim is made because the sample is small.")
 
     add_heading(document, "3.7 Validity, ethics, and data governance", level=2)
     for risk in [
@@ -1323,7 +1379,7 @@ def build_report():
             run.font.size = Pt(9.5)
 
     # 4. Results & Discussion
-    add_heading(document, "4. Results and Discussion", level=1, page_break=True)
+    add_heading(document, "4. Results and Discussion", level=1)
     add_heading(document, "4.1 Classification results", level=2)
     add_caption(document, "Table 8: Leakage-free held-out classification metrics from evaluation_results.json")
     metric_rows = []
@@ -1457,8 +1513,41 @@ def build_report():
         "The confusion chart counts are small because the held-out set is distributed across many labels. A difference of one example can materially change a class score. Per-class support and repeated cross-validation would be needed before making stronger comparative claims.",
     )
 
-    add_heading(document, "4.4 Objective-by-objective interpretation", level=2)
-    add_caption(document, "Table 12: Objective attainment")
+    add_heading(document, "4.4 User satisfaction and usability", level=2)
+    add_paragraph(
+        document,
+        f"Five anonymous Google Forms responses were collected between 12 and 24 August 2026 using the exact five-item questionnaire reproduced in Appendix C. All complete responses were retained, including one respondent who selected 1 for every item. Across all {survey['rating_count']} ratings, the mean was {survey['overall_mean']:.2f}/5, the median was {survey['overall_median']:.1f}, and {survey['overall_favorable_count']} ratings ({survey['overall_favorable_rate'] * 100:.1f}%) were favorable. Favorable was defined before analysis as a rating of 4 or 5.",
+    )
+    add_caption(document, "Table 12: Verified user-satisfaction results (N=5)")
+    add_table(
+        document,
+        ["Survey item", "Mean / 5", "Median", "Favorable (4-5)"],
+        [
+            (
+                f"Q{index}. {item['label']}",
+                f"{item['mean']:.2f}",
+                f"{item['median']:.1f}",
+                f"{item['favorable_count']}/5 ({item['favorable_rate'] * 100:.0f}%)",
+            )
+            for index, item in enumerate(survey["items"], 1)
+        ],
+        [4300, 1500, 1300, 2260],
+        font_size=8.7,
+    )
+    add_figure(
+        document,
+        assets["survey"],
+        6.2,
+        "Horizontal bar chart of the five verified survey item means. Intent understanding and answer clarity both score 4.0 out of 5; interface usability scores 3.8; response speed 3.6; and overall satisfaction 3.4. Labels also show the percentage rating each item 4 or 5.",
+        "Figure 7: Verified five-item usability survey results",
+    )
+    add_paragraph(
+        document,
+        "Intent understanding and answer clarity received the strongest item means (4.00/5; 80% favorable each). Interface usability averaged 3.80/5, while response speed averaged 3.60/5. Overall satisfaction was the lowest-rated item at 3.40/5, with three of five respondents rating it 4 or 5. The result suggests that the prototype is generally understandable but still needs reliability, latency, and overall experience improvements. Because N=5 and recruitment was not probabilistic, these findings describe only this pilot group and should not be generalized to the wider student population.",
+    )
+
+    add_heading(document, "4.5 Objective-by-objective interpretation", level=2)
+    add_caption(document, "Table 13: Objective attainment")
     add_table(
         document,
         ["Objective", "Finding", "Status"],
@@ -1469,30 +1558,30 @@ def build_report():
             ("Leakage-free comparison", f"Recorded overlap={methodology.get('train_test_text_overlap_count', 'N/A')}; four model rows", "Met for local evaluation"),
             ("Cloud Dialogflow performance", "No authentic cloud confusion matrix or API test artifact", "Not yet demonstrated"),
             ("Response-quality evidence", response_status, "Measured" if has_response_metrics else "N/A or pending rerun"),
-            ("User satisfaction", f"{len(feedback_records)} verified feedback record(s)", "N/A; instrument supplied"),
+            ("User satisfaction", f"N={survey['respondent_count']}; five-item mean {survey['overall_mean']:.2f}/5; favorable {survey['overall_favorable_rate'] * 100:.1f}%", "Measured descriptively"),
         ],
         [2290, 5010, 2060],
         font_size=8.5,
     )
 
-    add_heading(document, "4.5 Limitations and practical implications", level=2)
+    add_heading(document, "4.6 Limitations and practical implications", level=2)
     for limitation in [
         "The evaluation snapshot is small relative to the number of intents and may be stale when intents.json changes.",
         "The Member 1 offline score measures a local pattern/Jaccard surrogate, not Dialogflow ES cloud NLU.",
         "The member approaches are not symmetric: Member 2 includes a confidence gate, while the baselines always classify; coverage must accompany accuracy.",
         "Template responses reduce hallucination but can become outdated and do not support rich multi-turn context.",
         ("Automatic text-overlap metrics are available from the independent-reference instrument but still require human factuality and usability review." if has_response_metrics else "Automatic text-overlap metrics are N/A in the current artifact and would require both a valid reference test and human review."),
-        "No verified participant study is available, so usability and satisfaction cannot be concluded.",
+        "The verified usability pilot has only five respondents, so it supports descriptive feedback but not statistical generalisation.",
     ]:
         add_bullet(document, limitation)
     add_paragraph(document, "Practically, the strongest next step is not to advertise the current prototype as accurate. It is to review the intent taxonomy, add independently phrased examples to weak labels, tune the confidence threshold on a validation set, rerun the leakage-free evaluation, and capture authentic Dialogflow test evidence. This sequence directly targets the observed errors and evidence gaps.")
 
     # 5. Conclusion, references, sources
-    add_heading(document, "5. Conclusion, References and Sources", level=1, page_break=True)
+    add_heading(document, "5. Conclusion, References and Sources", level=1)
     add_heading(document, "5.1 Achievements", level=2)
     add_paragraph(
         document,
-        "The project has produced an end-to-end university FAQ chatbot prototype with a clear task scenario, a structured intent/response inventory, a Dialogflow ES configuration path, an offline Python classifier, a Streamlit interface, controlled fallback handling, test code, and a reproducible evaluation artifact. The documentation corrects the most consequential evidence risks by separating cloud configuration from the local simulator, reading all metrics from a leakage-free artifact, and refusing to invent response-quality or satisfaction results.",
+        "The project has produced an end-to-end university FAQ chatbot prototype with a clear task scenario, a structured intent/response inventory, a Dialogflow ES configuration path, an offline Python classifier, a Streamlit interface, controlled fallback handling, test code, a reproducible evaluation artifact, and a verified five-response usability pilot. The documentation separates cloud configuration from the local simulator and keeps every reported metric traceable to a recorded artifact.",
     )
     add_paragraph(
         document,
@@ -1501,7 +1590,7 @@ def build_report():
 
     add_heading(document, "5.2 Limitations", level=2)
     response_limit = "Response-overlap scores are available, but they do not establish factual correctness or usability." if has_response_metrics else "Response-overlap metrics are not available in the current evaluation artifact."
-    add_paragraph(document, f"The current system is single-turn, English-first, dependent on a small project-specific phrase set, and limited to predefined responses. Dataset and evaluation snapshots are not automatically synchronised unless evaluate.py and this builder are rerun in sequence. Dialogflow cloud accuracy has not been demonstrated by the offline surrogate. User satisfaction remains unavailable because the verified feedback file is empty. {response_limit}")
+    add_paragraph(document, f"The current system is single-turn, English-first, dependent on a small project-specific phrase set, and limited to predefined responses. Dataset and evaluation snapshots are not automatically synchronised unless evaluate.py and this builder are rerun in sequence. Dialogflow cloud accuracy has not been demonstrated by the offline surrogate. The usability survey is genuine but preliminary because it contains only five anonymous respondents. {response_limit}")
 
     add_heading(document, "5.3 Future work", level=2)
     add_numbered_list(document, [
@@ -1510,7 +1599,7 @@ def build_report():
         "Evaluate class-balanced metrics, per-class support, calibration, latency, and repeated splits in addition to the current weighted metrics.",
         "Run an authentic Dialogflow ES console/API test on the same locked queries and preserve dated screenshots or JSON responses.",
         "Expand and review the independent-source response test, then pair BLEU/ROUGE with blinded human ratings for factuality, relevance, clarity, and source usefulness.",
-        "Conduct the Appendix C survey with informed participation, report the actual response count and descriptive statistics, and retain anonymous raw responses.",
+        "Repeat the Appendix C survey with a larger and more diverse voluntary sample, preserve anonymous responses, and compare results with the current N=5 pilot without discarding unfavorable ratings.",
         "Add multi-turn context and a source-aware retrieval layer only after factuality, privacy, and update governance are defined.",
     ])
 
@@ -1532,7 +1621,7 @@ def build_report():
         source_display = []
         for topic, url, artifact in official_sources:
             source_display.append((topic.replace("_", " ").title(), url, artifact))
-        add_caption(document, "Table 13: Official factual-source inventory used by the response-quality instrument")
+        add_caption(document, "Table 14: Official factual-source inventory used by the response-quality instrument")
         add_table(
             document,
             ["Topic", "Official URL", "Repository provenance"],
@@ -1542,7 +1631,7 @@ def build_report():
         )
     else:
         add_callout(document, "Source inventory pending", "No official source mappings were found in data/response_quality_test.json or docs/dialogflow_setup.md. Add verified TAR UMT pages before response-quality evaluation.", tone="red")
-    add_caption(document, "Table 14: Software and artifact acknowledgement")
+    add_caption(document, "Table 15: Software and artifact acknowledgement")
     add_table(
         document,
         ["Component", "Recorded use", "Repository evidence"],
@@ -1551,7 +1640,7 @@ def build_report():
             ("NLTK", "Lemmatisation and optional BLEU token processing", "src/preprocessing.py; evaluate.py"),
             ("scikit-learn", "TF-IDF, Logistic Regression, Naïve Bayes, SVM, metrics, split, cross-validation", "src/ml_model.py; model_selection.py; evaluate.py; data/model_selection_results.json"),
             ("Streamlit", "Interactive prototype interface", "app.py"),
-            ("Dialogflow ES", "Platform configuration and integration track", "dialogflow_agent.zip; docs/dialogflow_setup.md when present"),
+            ("Dialogflow ES", "Platform configuration, parameterized fulfillment, and integration track", "dialogflow_agent.zip; src/dialogflow_webhook.py; docs/dialogflow_setup.md"),
             ("Repository data", "Intent patterns, feedback, tests, evaluation results", "data/ directory"),
         ],
         [1850, 3850, 3660],
@@ -1566,7 +1655,7 @@ def build_report():
         document,
         ["Member", "Proposed responsibility record", "Evidence to attach", "Confirmation"],
         [
-            ("Member 1\n[TO BE PROVIDED]", "Dialogflow ES intent/entity/response configuration; exported agent artifact; train-only simulator integration; cloud validation plan", "Export timestamp; version history; authentic console/API test; meeting log", "Member initials/date: __________"),
+            ("Member 1\n[TO BE PROVIDED]", "Dialogflow ES intent/entity/response configuration; parameterized webhook handler; exported agent artifact; train-only simulator integration", "Export timestamp; webhook test; authentic console/API test; meeting log", "Member initials/date: __________"),
             ("Member 2\n[TO BE PROVIDED]", "NLTK preprocessing; character-boundary TF-IDF (3–5) + balanced Logistic Regression (C=30) pipeline; confidence gate; model selection; local evaluation and UI integration", "Commit/version history; model-selection artifact; test output; code walkthrough; meeting log", "Member initials/date: __________"),
             ("Shared", "Problem framing; dataset review; literature synthesis; error analysis; final QA and demonstration", "Minutes, review notes, rehearsal checklist", "Both initials/date: __________"),
         ],
@@ -1598,7 +1687,7 @@ def build_report():
         ("Report", "Run the command below to refresh charts and AI Report - Final.docx."),
         ("Visual QA", "Render the DOCX with canonical render_docx.py and inspect every page."),
         ("Cloud evidence", "Export the Dialogflow agent and capture authentic locked-query results."),
-        ("Survey", "If conducted, preserve anonymous raw responses and document consent/collection dates."),
+        ("Survey", "Preserve data/user_feedback_verified.json; confirm N=5 and collection dates before rebuilding."),
     ]
     add_caption(document, "Table B1: Reproducibility and submission checklist")
     add_table(
@@ -1626,72 +1715,55 @@ def build_report():
             run.font.size = Pt(8.6)
     add_paragraph(document, f"Evaluation artifact: {EVALUATION_PATH.name} generated at {generated_at}. Builder output generated at {build_time}.", style="Source Note")
 
-    add_heading(document, "Appendix C. Planned user-satisfaction instrument", level=1, page_break=True)
-    add_callout(document, "Status", f"This is a survey instrument, not a result. data/user_feedback.json contains {len(feedback_records)} verified record(s) at build time. Do not report a sample size or satisfaction statistic until genuine responses have been collected and checked.", tone="gold")
-    add_heading(document, "Participant information and consent", level=2)
-    add_paragraph(document, "Purpose: to assess whether the university inquiry chatbot is understandable and useful. Participation is voluntary. Do not enter names, student IDs, telephone numbers, or sensitive enquiry content. Responses are used only for this assignment. Participants may stop before submitting. By continuing, the participant confirms that they understand this information and consent to the anonymous use of their responses.")
-    add_heading(document, "Task protocol", level=2)
-    add_numbered_list(document, [
-        "Ask one course or programme question.",
-        "Ask one fee, admission, calendar, or accommodation question.",
-        "Rephrase one question using different wording or a minor typing error.",
-        "Ask one deliberately out-of-scope question and observe the fallback.",
-        "Follow any official source link supplied and judge whether it supports the answer.",
-    ])
-    add_heading(document, "Five-point ratings", level=2)
-    add_paragraph(document, "Scale: 1 = strongly disagree, 2 = disagree, 3 = neither agree nor disagree, 4 = agree, 5 = strongly agree.", style="Source Note")
-    survey_items = [
-        "The chatbot understood the intent of my in-scope questions.",
-        "The answers were relevant to the questions I asked.",
-        "The answers were clear and easy to understand.",
-        "The fallback message was appropriate when the chatbot was uncertain.",
-        "The interface was easy to navigate.",
-        "The response time was acceptable.",
-        "Official source links, when provided, were useful.",
-        "I would use this chatbot as a first step for common university enquiries.",
-        "Overall, I was satisfied with this prototype.",
-    ]
-    add_caption(document, "Table C1: User-satisfaction questionnaire")
+    add_heading(document, "Appendix C. Verified user-satisfaction instrument and data", level=1, page_break=True)
+    add_callout(document, "Observed pilot", f"The frozen anonymized Google Forms snapshot contains N={survey['respondent_count']} complete responses collected from 12 to 24 August 2026. All five complete responses are retained, including the all-1 response. Results are descriptive and are not generalized beyond this small pilot.", tone="gold")
+    add_heading(document, "Questionnaire and scoring rule", level=2)
+    add_paragraph(document, "Scale: 1 = strongly disagree, 2 = disagree, 3 = neither agree nor disagree, 4 = agree, and 5 = strongly agree. A favorable response is defined as 4 or 5. The questionnaire collected ratings and timestamps only; the exported research snapshot contains no names or student IDs.", style="Source Note")
+    add_caption(document, "Table C1: Exact five-item Google Forms questionnaire")
     add_table(
         document,
-        ["Item", "Statement", "1", "2", "3", "4", "5"],
-        [(str(index), statement, "○", "○", "○", "○", "○") for index, statement in enumerate(survey_items, 1)],
-        [600, 6660, 420, 420, 420, 420, 420],
-        font_size=8.1,
+        ["Item", "Statement"],
+        [(f"Q{index}", statement) for index, (_, _, statement) in enumerate(SURVEY_FIELDS, 1)],
+        [900, 8460],
+        font_size=8.8,
     )
-    add_heading(document, "Open-ended questions", level=2)
-    for question in [
-        "Which question, if any, did the chatbot misunderstand?",
-        "Which answer was least useful or appeared outdated?",
-        "What is the single most important improvement?",
-        "Optional participant category: prospective student / current student / staff / other / prefer not to say.",
-    ]:
-        add_bullet(document, question)
-    add_heading(document, "Planned analysis", level=2)
-    add_paragraph(document, "Report the exact number of valid responses, item-level counts, medians, interquartile ranges, and clearly labelled means only if appropriate. Do not convert ratings into a satisfaction percentage without a predeclared rule. Summarise open comments by theme without publishing identifying text. Separate exploratory feedback from formal conclusions and retain the anonymous raw data file.")
-    add_heading(document, "Data-quality and exclusion rules", level=2)
+    add_heading(document, "Item-level descriptive results", level=2)
+    add_caption(document, "Table C2: Verified descriptive statistics")
+    add_table(
+        document,
+        ["Item", "Mean", "Median", "Favorable"],
+        [
+            (f"Q{index}", f"{item['mean']:.2f}/5", f"{item['median']:.1f}", f"{item['favorable_count']}/5 ({item['favorable_rate'] * 100:.0f}%)")
+            for index, item in enumerate(survey["items"], 1)
+        ] + [("All 25 ratings", f"{survey['overall_mean']:.2f}/5", f"{survey['overall_median']:.1f}", f"{survey['overall_favorable_count']}/25 ({survey['overall_favorable_rate'] * 100:.1f}%)")],
+        [2400, 1800, 1700, 3460],
+        font_size=8.8,
+    )
+    add_heading(document, "Anonymized response matrix", level=2)
+    add_caption(document, "Table C3: Retained complete responses")
+    add_table(
+        document,
+        ["Response", "Date", "Q1", "Q2", "Q3", "Q4", "Q5"],
+        [
+            (
+                str(record.get("response_id", f"R{index}")),
+                str(record.get("submitted_at", ""))[:10],
+                *(str(record[key]) for key, _, _ in SURVEY_FIELDS),
+            )
+            for index, record in enumerate(feedback_records, 1)
+        ],
+        [1250, 2400, 1142, 1142, 1142, 1142, 1142],
+        font_size=8.4,
+    )
+    add_heading(document, "Data-quality decisions and limitations", level=2)
     for rule in [
-        "Exclude test submissions created by the development team unless they are explicitly labelled as pilot data.",
-        "Exclude blank responses and exact duplicate submissions after documenting the rule and retained count.",
-        "Do not exclude a low rating merely because it is unfavourable; record any technical failure reported by the participant.",
-        "Preserve the collection start/end dates, questionnaire version, invitation method, and final valid-response count.",
+        "The separate local UI demo submission was excluded because it was not part of the Google Forms study.",
+        "No complete Google Forms response was removed; an unfavorable response is not an exclusion criterion.",
+        "Only complete integer ratings from 1 to 5 were accepted by the verified-data validator.",
+        "The small convenience sample (N=5) is suitable for pilot feedback but not inferential statistics or population claims.",
+        "The reproducible anonymized snapshot is stored in data/user_feedback_verified.json; the live response sheet should remain access-controlled.",
     ]:
         add_bullet(document, rule)
-    add_caption(document, "Table C2: Minimum anonymous feedback-data schema")
-    add_table(
-        document,
-        ["Field", "Purpose", "Example format"],
-        [
-            ("response_id", "Anonymous deduplication key", "random code; no student ID"),
-            ("submitted_at", "Collection audit trail", "ISO date/time"),
-            ("participant_category", "Descriptive subgroup only", "prospective/current/staff/other/prefer not"),
-            ("q1–q9", "Individual Likert responses", "integer 1–5"),
-            ("open_comment", "Improvement evidence", "optional free text; redact identifiers"),
-            ("questionnaire_version", "Instrument traceability", "for example, v1.0"),
-        ],
-        [1850, 4300, 3210],
-        font_size=8.5,
-    )
 
     add_heading(document, "Appendix D. Authentic evidence register", level=1, page_break=True)
     add_paragraph(document, "This register distinguishes captured local evidence from artifacts still required. Cloud rows remain pending because a local simulator or synthetic image cannot validate Dialogflow ES.")
@@ -1706,13 +1778,14 @@ def build_report():
             ("E4", "Dialogflow ES intents view", "Authenticated console; agent name; capture date", "TO BE CAPTURED"),
             ("E5", "Dialogflow locked-query test", "Query set ID; intent; confidence; API/console provenance", "TO BE CAPTURED"),
             ("E6", "Evaluation/test terminal output", "Command; timestamp; test count; pass/fail", "TO BE CAPTURED"),
+            ("E7", "Verified Google Forms survey snapshot", f"N={survey['respondent_count']}; 12-24 August 2026; anonymized response matrix", "CAPTURED"),
         ],
         [1150, 2850, 3900, 1460],
         font_size=8.5,
     )
     if screenshot_path.exists():
         add_paragraph(document, "E1/E2 artifact: report_assets/app_chatbot_e2e.png. Figure 5 reproduces it without alteration.", style="Source Note")
-    add_callout(document, "Do not substitute", "The local Dialogflow-style simulator is not an acceptable substitute for E4 or E5. Likewise, a sample feedback file is not evidence of real participants.", tone="red")
+    add_callout(document, "Do not substitute", "The local Dialogflow-style simulator is not an acceptable substitute for E4 or E5. E7 uses the verified anonymized Google Forms snapshot; local demo feedback is excluded.", tone="red")
 
     def add_plagiarism_form(member_number):
         add_heading(document, f"Appendix {'E' if member_number == 1 else 'F'}. Plagiarism Statement Form — Member {member_number}", level=1, page_break=True)
@@ -1739,7 +1812,7 @@ def build_report():
         for item in [
             "I have reviewed the final report and source code.",
             "I have checked that my individual contribution record is accurate.",
-            "I have checked that all reported metrics are traceable to evaluation_results.json or clearly labelled N/A.",
+            "I have checked that all reported metrics are traceable to evaluation_results.json, user_feedback_verified.json, or clearly labelled N/A.",
             "I have complied with TAR UMT academic-integrity requirements and the instructions supplied for this assignment.",
         ]:
             add_bullet(document, "☐ " + item)

@@ -1,0 +1,57 @@
+[
+  {
+    "response_id": "GF-001",
+    "submitted_at": "2026-08-12T17:01:33+08:00",
+    "source": "Google Forms",
+    "questionnaire_version": "google-form-v1",
+    "intent_accuracy": 5,
+    "response_quality": 5,
+    "ui_navigability": 3,
+    "response_speed": 4,
+    "overall_satisfaction": 3
+  },
+  {
+    "response_id": "GF-002",
+    "submitted_at": "2026-08-24T19:42:53+08:00",
+    "source": "Google Forms",
+    "questionnaire_version": "google-form-v1",
+    "intent_accuracy": 1,
+    "response_quality": 1,
+    "ui_navigability": 1,
+    "response_speed": 1,
+    "overall_satisfaction": 1
+  },
+  {
+    "response_id": "GF-003",
+    "submitted_at": "2026-08-24T19:48:45+08:00",
+    "source": "Google Forms",
+    "questionnaire_version": "google-form-v1",
+    "intent_accuracy": 5,
+    "response_quality": 5,
+    "ui_navigability": 5,
+    "response_speed": 5,
+    "overall_satisfaction": 5
+  },
+  {
+    "response_id": "GF-004",
+    "submitted_at": "2026-08-24T19:50:41+08:00",
+    "source": "Google Forms",
+    "questionnaire_version": "google-form-v1",
+    "intent_accuracy": 4,
+    "response_quality": 4,
+    "ui_navigability": 5,
+    "response_speed": 3,
+    "overall_satisfaction": 4
+  },
+  {
+    "response_id": "GF-005",
+    "submitted_at": "2026-08-24T19:50:52+08:00",
+    "source": "Google Forms",
+    "questionnaire_version": "google-form-v1",
+    "intent_accuracy": 5,
+    "response_quality": 5,
+    "ui_navigability": 5,
+    "response_speed": 5,
+    "overall_satisfaction": 4
+  }
+]

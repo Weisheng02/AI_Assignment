@@ -394,14 +394,14 @@ with tab_metrics:
     st.info("Low lexical-overlap scores are reported as observed, not inflated. The report discusses why source-link responses can be relevant while sharing few exact n-grams with concise reference answers.")
 
     st.subheader("4. User Satisfaction & Usability Rating (Requirement g.iii)")
-    st.info("📋 **Usability Survey**: Use the 5-point questionnaire to collect genuine responses (1 = Strongly Disagree, 5 = Strongly Agree). The table below reports only saved submissions; no synthetic fallback scores are used. [Open the Google Form](https://docs.google.com/forms/d/e/1FAIpQLSf9lTavaRnmdLv7MhYZb6jzqDwLd3sz47IlFqjgPNAFQk2I8w/viewform)")
+    st.info("📋 **Usability Survey**: The table below reports the frozen, anonymized Google Forms snapshot used in the report (N=5). A favorable rating is predeclared as 4 or 5. [Open the Google Form](https://docs.google.com/forms/d/e/1FAIpQLSf9lTavaRnmdLv7MhYZb6jzqDwLd3sz47IlFqjgPNAFQk2I8w/viewform)")
     st.dataframe(get_user_satisfaction_metrics(), width="stretch")
 
-    with st.expander("⭐ **Submit Live User Satisfaction Feedback & Rating (Demo Interactive Probe)**"):
+    with st.expander("⭐ **Optional local feedback demo (excluded from the formal report)**"):
         if st.session_state.get("submitted_feedback", False):
             st.success("✅ **Feedback Received**: You have already submitted feedback for this session! Thank you for rating our university chatbot.")
         else:
-            st.markdown("Try rating the chatbot live during the demo! Your feedback will dynamically update the system metrics.")
+            st.markdown("This demonstrates validated local data collection. Submissions are stored separately and do not alter the verified Google Forms results above.")
             col_fb1, col_fb2 = st.columns(2)
             with col_fb1:
                 fb_name = st.text_input("Optional anonymous alias:", value="")
@@ -416,7 +416,7 @@ with tab_metrics:
             if st.button("🚀 Submit Feedback Rating", width="stretch"):
                 save_user_feedback(fb_name, fb_acc, fb_qual, fb_ui, fb_speed, fb_sat, fb_comments)
                 st.session_state.submitted_feedback = True
-                st.success("✅ Thank you! Your feedback has been saved and metrics updated dynamically!")
+                st.success("✅ Thank you! Your demo feedback was saved locally and is excluded from the formal report statistics.")
                 st.rerun()
 
 with tab_analytics:
@@ -556,10 +556,12 @@ with tab_info:
     - **Team Size**: 2 Members
     - **Dataset**: Curated university FAQ intent dataset (`intents.json`; see the report and data source notes)
 
-    ### Requirements Fulfilled (Requirement g.i & g.ii)
-    - **Intent Metrics (g.i)**: Accuracy, Precision, Recall, Weighted F1-Score.
+    ### Requirements Fulfilled (Requirements g.i–g.iii)
+    - **Intent Accuracy (g.i)**: tested with accuracy, precision, recall, and weighted F1-score.
     - **Response Quality (g.ii)**: reported only when an independent reference-answer set is available; intent-template reuse is not counted as valid evidence.
+    - **User Feedback (g.iii)**: analysed from the frozen, anonymized five-response Google Forms snapshot using item means, medians, and favorable rates.
     - **Dialogflow Integration**: embedded Messenger UI plus a reproducible Dialogflow ES export package.
+    - **Webhook Extension**: an optional parameter-aware Dialogflow webhook with an official-source allowlist.
     - **Multi-Model Support**: Member 1 (Dialogflow Platform) + Member 2 (Python ML Pipeline).
     - **Continuous Active Learning Loop**: Automatic logging and admin GUI for incremental dataset expansion or discarding.
     - **Sentiment & Urgency Analysis**: Automatic classification of student query urgency and emotional tone.

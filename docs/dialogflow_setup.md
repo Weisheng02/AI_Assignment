@@ -58,15 +58,17 @@ Two intents intentionally have fulfillment enabled in their intent JSON:
   current official department contact in the requested channel.
 
 The ZIP does **not** contain credentials, a deployed function or a webhook URL.
-The agent-level webhook is deliberately blank. Before demonstrating live
-fulfillment:
+The agent-level webhook is deliberately blank. A tested, framework-free handler
+is supplied in `src/dialogflow_webhook.py`; it supports `programme.lookup` and
+`campus.service.lookup` and returns only allowlisted official-source links.
+Before demonstrating live fulfillment:
 
-1. Deploy an HTTPS endpoint that accepts a Dialogflow ES V2 webhook request.
+1. Run `python src/dialogflow_webhook.py` for a local test, then deploy the same
+   handler behind a public HTTPS endpoint.
 2. Validate the `queryResult.action` and allow only the actions above.
 3. Read parameters from `queryResult.parameters`.
 4. Retrieve data only from a maintained official-source allowlist.
-5. Return a Dialogflow response containing `fulfillmentText` and the official
-   source URL.
+5. Confirm the response contains `fulfillmentText` and the official source URL.
 6. Configure the endpoint under **Fulfillment**, save it, and test both success
    and failure paths. The static intent response is the safe fallback if the
    webhook is unavailable.

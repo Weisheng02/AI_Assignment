@@ -42,6 +42,9 @@ RESPONSE_QUALITY_NA = (
     "N/A - no independent human-authored response reference set was provided"
 )
 FEEDBACK_PATH = os.path.join(os.path.dirname(__file__), "data", "user_feedback.json")
+VERIFIED_FEEDBACK_PATH = os.path.join(
+    os.path.dirname(__file__), "data", "user_feedback_verified.json"
+)
 EVALUATION_RESULTS_PATH = os.path.join(
     os.path.dirname(__file__), "data", "evaluation_results.json"
 )
@@ -701,7 +704,7 @@ def _survey_na_frame(reason):
                 "Usability Metric": label,
                 "Description": description,
                 "Mean Rating (1-5)": float("nan"),
-                "Satisfaction Rate": "N/A",
+                "Favorable Rate (4-5)": "N/A",
                 "Respondents": 0,
                 "Data Status": reason,
             }
@@ -710,13 +713,19 @@ def _survey_na_frame(reason):
     )
 
 
-def get_user_satisfaction_metrics():
-    """Summarize only validated survey records; never substitute fake scores."""
-    if not os.path.exists(FEEDBACK_PATH):
+def get_user_satisfaction_metrics(feedback_path=None):
+    """Summarize verified survey records using a predeclared favorable rule.
+
+    A rating is favorable when it is 4 (Agree) or 5 (Strongly Agree). The
+    default source is the immutable, anonymized Google Forms snapshot. Local
+    demo submissions are saved separately and are not mixed into report data.
+    """
+    source_path = feedback_path or VERIFIED_FEEDBACK_PATH
+    if not os.path.exists(source_path):
         return _survey_na_frame("N/A - no survey data file")
 
     try:
-        with open(FEEDBACK_PATH, "r", encoding="utf-8") as file:
+        with open(source_path, "r", encoding="utf-8") as file:
             logs = json.load(file)
     except (OSError, json.JSONDecodeError):
         return _survey_na_frame("N/A - survey data file is unreadable")
@@ -743,14 +752,15 @@ def get_user_satisfaction_metrics():
             sum(item[key] for item in validated_logs) / respondent_count,
             2,
         )
+        favorable_count = sum(item[key] >= 4 for item in validated_logs)
         rows.append(
             {
                 "Usability Metric": label,
                 "Description": description,
                 "Mean Rating (1-5)": mean,
-                "Satisfaction Rate": f"{round(mean / 5 * 100, 1)}%",
+                "Favorable Rate (4-5)": f"{round(favorable_count / respondent_count * 100, 1)}%",
                 "Respondents": respondent_count,
-                "Data Status": "Observed local survey records",
+                "Data Status": "Verified Google Forms snapshot",
             }
         )
     return pd.DataFrame(rows)
