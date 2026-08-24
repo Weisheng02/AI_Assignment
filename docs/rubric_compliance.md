@@ -33,7 +33,7 @@ This checklist maps the frozen submission snapshot to the assignment specificati
 | Rubric item | Evidence | Status |
 |---|---|---|
 | User interface / output | Five-tab Streamlit interface, model selector, chat evidence, metrics dashboard and protected review workflow | Met |
-| Programming | Modular source, atomic JSON writes, validation, confidence handling and 25 automated tests | Met |
+| Programming | Modular source, atomic JSON writes, validation, confidence handling and 26 automated tests | Met |
 | Degree of completion | Local solution runs end to end; 10/10 labelled probes pass for both local clients; Streamlit AppTest has zero exceptions | Met locally |
 | System implementation | Prototype and report describe the same two-approach architecture and frozen metrics | Met |
 | Presentation and on-the-spot coding | Demonstration checklist and contribution appendix are supplied | Assessed live; both students must prepare |
@@ -44,7 +44,7 @@ This checklist maps the frozen submission snapshot to the assignment specificati
 - Member 1 offline Dialogflow-style baseline: accuracy 0.6163; weighted F1 0.5983; coverage 0.9186.
 - Member 2 character TF-IDF + Logistic Regression: accuracy 0.7442; weighted F1 0.7626; coverage 0.8721.
 - Independent response set: 14 cases; Member 1 BLEU 0.1460 / ROUGE-1 F1 0.4086; Member 2 BLEU 0.1689 / ROUGE-1 F1 0.4137.
-- Automated checks: 25/25 tests, 10/10 labelled probes for each local client, valid Dialogflow ZIP, and zero Streamlit AppTest exceptions.
+- Automated checks: 26/26 tests, 10/10 labelled probes for each local client, valid Dialogflow ZIP, and zero Streamlit AppTest exceptions.
 - Verified usability survey: N=5; item means 4.0, 4.0, 3.8, 3.6, and 3.4 out of 5; 17/25 ratings (68%) were favorable (4 or 5).
 
 ## Required human actions before submission

@@ -47,21 +47,13 @@ python -m nltk.downloader wordnet omw-1.4
 
 ## Run the prototype
 
-Set an administrator PIN before enabling active-learning mutations:
-
 ```bash
-export CHATBOT_ADMIN_PIN='choose-a-demo-pin'
 streamlit run app.py
 ```
 
-On Windows PowerShell, the equivalent commands are:
-
-```powershell
-$env:CHATBOT_ADMIN_PIN='choose-a-demo-pin'
-streamlit run app.py
-```
-
-Without `CHATBOT_ADMIN_PIN`, the Active Learning Review tab remains read-only. This prevents accidental dataset deletion or modification during a public demo.
+The Active Learning Review tab allows reviewed low-confidence queries to be
+merged into an intent or discarded directly. Clearing the complete review log
+still requires an explicit confirmation checkbox.
 
 ## Reproduce the evidence
 

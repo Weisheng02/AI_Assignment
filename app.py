@@ -110,7 +110,7 @@ def load_json_file(path, default):
 
 
 def atomic_write_json(path, payload):
-    """Write JSON atomically so an interrupted admin action cannot corrupt data."""
+    """Write JSON atomically so an interrupted review action cannot corrupt data."""
     directory = os.path.dirname(path)
     os.makedirs(directory, exist_ok=True)
     file_descriptor, temporary_path = tempfile.mkstemp(
@@ -466,7 +466,7 @@ with tab_analytics:
 
 with tab_learning:
     st.header("🔄 Active Learning Review")
-    st.markdown("Low-confidence local-model queries are logged for a human reviewer. Any dataset change requires an administrator PIN and explicit confirmation.")
+    st.markdown("Low-confidence local-model queries are logged for human review. Review actions are available directly; clearing the full log still requires explicit confirmation.")
 
     if os.path.exists(LOG_PATH):
         unrecognized = load_json_file(LOG_PATH, [])
@@ -480,24 +480,7 @@ with tab_learning:
         df_unrec = pd.DataFrame(unrecognized)
         st.dataframe(df_unrec, width="stretch")
 
-        st.subheader("2. Admin Review Actions")
-
-        configured_admin_pin = os.getenv("CHATBOT_ADMIN_PIN", "").strip()
-        if not configured_admin_pin:
-            st.warning("Read-only mode: set the CHATBOT_ADMIN_PIN environment variable before starting Streamlit to enable dataset changes.")
-            admin_unlocked = False
-        elif st.session_state.get("admin_unlocked", False):
-            admin_unlocked = True
-            st.success("Administrator actions are unlocked for this browser session.")
-        else:
-            supplied_pin = st.text_input("Administrator PIN", type="password")
-            if st.button("Unlock administrator actions", width="stretch"):
-                if supplied_pin == configured_admin_pin:
-                    st.session_state.admin_unlocked = True
-                    st.rerun()
-                else:
-                    st.error("Incorrect administrator PIN.")
-            admin_unlocked = False
+        st.subheader("2. Review Actions")
 
         col_q, col_tag = st.columns(2)
         with col_q:
@@ -508,7 +491,7 @@ with tab_learning:
         btn_col1, btn_col2, btn_col3 = st.columns(3)
 
         with btn_col1:
-            if st.button("➕ Merge Query & Retrain Model", width="stretch", disabled=not admin_unlocked):
+            if st.button("➕ Merge Query & Retrain Model", width="stretch"):
                 normalized_query = " ".join(selected_query.split()).strip()
                 existing_patterns = {
                     " ".join(pattern.split()).strip().casefold()
@@ -532,15 +515,15 @@ with tab_learning:
                     st.rerun()
 
         with btn_col2:
-            if st.button("🗑️ Discard Selected Query", width="stretch", disabled=not admin_unlocked):
+            if st.button("🗑️ Discard Selected Query", width="stretch"):
                 unrecognized = [item for item in unrecognized if item['query'] != selected_query]
                 atomic_write_json(LOG_PATH, unrecognized)
                 st.warning("The selected logged query was discarded without modifying the training set.")
                 st.rerun()
 
         with btn_col3:
-            confirm_clear = st.checkbox("I confirm that all logged queries may be cleared.", disabled=not admin_unlocked)
-            if st.button("🧹 Clear All Queries", width="stretch", disabled=not (admin_unlocked and confirm_clear)):
+            confirm_clear = st.checkbox("I confirm that all logged queries may be cleared.")
+            if st.button("🧹 Clear All Queries", width="stretch", disabled=not confirm_clear):
                 atomic_write_json(LOG_PATH, [])
                 st.info("All logged unrecognized queries have been cleared.")
                 st.rerun()
@@ -563,7 +546,7 @@ with tab_info:
     - **Dialogflow Integration**: embedded Messenger UI plus a reproducible Dialogflow ES export package.
     - **Parameter Extension**: five custom entities, eight parameters, required-slot prompting, and parameter-aware official-source static responses without external webhook dependencies.
     - **Multi-Model Support**: Member 1 (Dialogflow Platform) + Member 2 (Python ML Pipeline).
-    - **Continuous Active Learning Loop**: Automatic logging and admin GUI for incremental dataset expansion or discarding.
+    - **Continuous Active Learning Loop**: Automatic logging and reviewer GUI for incremental dataset expansion or discarding.
     - **Sentiment & Urgency Analysis**: Automatic classification of student query urgency and emotional tone.
     - **Intent Dataset Analytics**: distribution charts for the curated training phrases; this is not presented as big data.
     """)
