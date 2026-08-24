@@ -108,6 +108,51 @@
       ]
     },
     {
+      "name": "campus_service_directory",
+      "is_overridable": false,
+      "is_enum": false,
+      "automated_expansion": false,
+      "allow_fuzzy_extraction": true,
+      "entries": [
+        {
+          "value": "https://www.tarc.edu.my/admissions/contact-us/",
+          "synonyms": ["admissions", "admission office", "admissions department", "DACE"]
+        },
+        {
+          "value": "https://www.tarc.edu.my/bursary/malaysian-student-fees-guide/",
+          "synonyms": ["finance", "finance office", "bursary", "fee payment office"]
+        },
+        {
+          "value": "https://www.tarc.edu.my/dsa/",
+          "synonyms": ["student affairs", "Department of Student Affairs", "DSA"]
+        },
+        {
+          "value": "https://library.tarc.edu.my/about-us/opening-hours",
+          "synonyms": ["library", "main library"]
+        },
+        {
+          "value": "https://scdcstu.tarc.edu.my/",
+          "synonyms": ["career centre", "career center", "SCDC", "student career development centre"]
+        },
+        {
+          "value": "https://www.tarc.edu.my/contact-us/",
+          "synonyms": ["international student office", "DISO", "international office", "IT support", "ICT support", "CITC", "computer support"]
+        },
+        {
+          "value": "https://examination.tarc.edu.my/examination-services/faqs",
+          "synonyms": ["examinations", "examination department", "DECA", "exam office"]
+        },
+        {
+          "value": "https://www.tarc.edu.my/dsa/a/accommodation/accommodation-kl-main-campus/",
+          "synonyms": ["accommodation", "hostel office", "student residence"]
+        },
+        {
+          "value": "https://www.tarc.edu.my/dsa/a/transportation/university-college-bus-service/",
+          "synonyms": ["transportation", "transport service", "bus service", "university bus", "campus shuttle", "shuttle bus"]
+        }
+      ]
+    },
+    {
       "name": "intake",
       "is_overridable": true,
       "is_enum": false,

@@ -4,7 +4,7 @@ BMCS Artificial Intelligence assignment, Topic 5: Chatbot Development.
 
 The prototype compares two independently implemented approaches to the same university FAQ scenario:
 
-1. **Member 1 - Google Dialogflow ES platform:** an importable agent configuration with intents, entities, eight parameters, required-slot prompting, static responses, and fallback handling.
+1. **Member 1 - Google Dialogflow ES platform:** an importable agent configuration with intents, five custom entities, eight parameters, required-slot prompting, parameter-aware static responses, and fallback handling.
 2. **Member 2 - local machine learning:** a Python pipeline using character-boundary TF-IDF features (3-5 character n-grams) and balanced Logistic Regression with a confidence threshold and a reviewed-query log.
 
 > Replace the member placeholders in the final report with the real names and student IDs before submission.

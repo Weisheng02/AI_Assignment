@@ -17,7 +17,7 @@ TUTOR  [TO BE PROVIDED]
 
 SUBMISSION DEADLINE  28 August 2026, before 12:00 p.m.
 
-EVALUATION SNAPSHOT  2026-08-24T20:33:22.440563
+EVALUATION SNAPSHOT  2026-08-24T20:44:20.516493
 
 # Document control and report map
 
@@ -30,8 +30,8 @@ Evidence boundary  All reported model values are read from data/evaluation_resul
 | Report builder | tools/build_final_report.py |
 | Output | AI Report - Final.docx |
 | Evaluation source | data/evaluation_results.json |
-| Evaluation generated at | 2026-08-24T20:33:22.440563 |
-| Document built at | 2026-08-24T20:33:48+08:00 |
+| Evaluation generated at | 2026-08-24T20:44:20.516493 |
+| Document built at | 2026-08-24T20:44:48+08:00 |
 | Identifying details | Member names, IDs, tutorial group, and tutor remain [TO BE PROVIDED]. |
 
 ## Report map
@@ -209,7 +209,7 @@ The preprocessing is deterministic and shared by the local classifier and local 
 
 ### 3.5.1 Member 1: Dialogflow ES configuration and local evaluation surrogate
 
-Member 1's platform approach is represented by Dialogflow ES configuration artifacts, including intents, training phrases, four custom entities, eight structured parameters, entity annotations, required-slot prompting, controlled static responses, and welcome/fallback handling. Webhook fulfillment is disabled by design, avoiding an external deployment dependency during the assessed demonstration. The repository also contains DialogflowSimulatorClient, a transparent local pattern/Jaccard implementation used solely for offline, train-only evaluation. This simulator is reproducible but is not Google's model and provides no evidence of cloud accuracy.
+Member 1's platform approach is represented by Dialogflow ES configuration artifacts, including intents, training phrases, five custom entities, eight structured parameters, entity annotations, required-slot prompting, parameter-aware official-source static responses, and welcome/fallback handling. The dedicated campus-service directory entity normalises a selected service to its official URL, so a prompted answer such as 'library' returns the Library opening-hours page without a webhook. Webhook fulfillment is disabled by design, avoiding an external deployment dependency during the assessed demonstration. The repository also contains DialogflowSimulatorClient, a transparent local pattern/Jaccard implementation used solely for offline, train-only evaluation. This simulator is reproducible but is not Google's model and provides no evidence of cloud accuracy.
 
 ### 3.5.2 Member 2: TF-IDF and Logistic Regression
 
@@ -278,7 +278,7 @@ For usability, the Google Form uses five Likert statements rated from 1 (strongl
 | Baseline 1 (Multinomial Naïve Bayes) | Local probabilistic baseline | 0.4651 | 0.5369 | 0.4651 | 0.4419 |
 | Baseline 2 (Linear SVM) | Local support-vector baseline | 0.7674 | 0.7651 | 0.7674 | 0.7459 |
 
-Source: data/evaluation_results.json generated at 2026-08-24T20:33:22.440563. All classification metrics use the same recorded held-out split.
+Source: data/evaluation_results.json generated at 2026-08-24T20:44:20.516493. All classification metrics use the same recorded held-out split.
 
 *Figure 3: Held-out intent-classification performance by model*
 
@@ -517,7 +517,7 @@ python src/create_dialogflow_zip.py
 
 python tools/build_final_report.py
 
-Evaluation artifact: evaluation_results.json generated at 2026-08-24T20:33:22.440563. Builder output generated at 2026-08-24T20:33:48+08:00.
+Evaluation artifact: evaluation_results.json generated at 2026-08-24T20:44:20.516493. Builder output generated at 2026-08-24T20:44:48+08:00.
 
 # Appendix C. Verified user-satisfaction instrument and data
 

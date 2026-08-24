@@ -829,13 +829,13 @@
         "WhatsApp admissions department"
       ],
       "responses": [
-        "For the latest department and contact-channel details, please use TAR UMT's official contact page: https://www.tarc.edu.my/contact-us/"
+        "For the latest $service.original information, use the relevant official TAR UMT page: $service"
       ],
       "context_set": "",
       "parameters": [
         {
           "name": "service",
-          "entity": "@campus_service",
+          "entity": "@campus_service_directory",
           "required": true,
           "is_list": false,
           "prompts": [

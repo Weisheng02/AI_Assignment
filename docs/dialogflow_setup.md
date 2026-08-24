@@ -6,13 +6,13 @@
 
 - `data/intents.json`: 36 source intents, 432 unique training patterns and 36
   static responses.
-- `data/entities.json`: 4 custom entity types with 32 canonical values.
+- `data/entities.json`: 5 custom entity types with 41 canonical values.
 - `src/create_dialogflow_zip.py`: deterministic ES JSON exporter and validator.
 
 The ZIP contains 37 intent definitions because the exporter adds one complete
 `Default Fallback Intent`. The source `greeting` intent is exported as the
 complete `Default Welcome Intent` with the `WELCOME` event. It also contains 36
-English usersays files, 4 entity definitions and 4 English entity-entry files.
+English usersays files, 5 entity definitions and 5 English entity-entry files.
 
 ## Import into Dialogflow ES
 
@@ -24,8 +24,9 @@ English usersays files, 4 entity definitions and 4 English entity-entry files.
 5. Select `dialogflow_agent.zip` and allow training to finish.
 6. In **Intents**, confirm there is exactly one `Default Welcome Intent` and one
    `Default Fallback Intent`.
-7. In **Entities**, confirm `course_programme`, `campus_service`, `intake`, and
-   `contact_channel` are present with their synonyms.
+7. In **Entities**, confirm `course_programme`, `campus_service`,
+   `campus_service_directory`, `intake`, and `contact_channel` are present with
+   their synonyms.
 
 Google's ES import/export documentation:
 https://cloud.google.com/dialogflow/es/docs/agents-settings
@@ -39,7 +40,8 @@ phrases; they are not decorative exports.
 |---|---|---|
 | `@course_programme` | `course.programme` | "do you offer computer science" |
 | `@intake` | `course.intake`, `intake.intake` | "programmes available for the June intake" |
-| `@campus_service` | `campus_service_lookup.service`, `transport.service`, `assessment_rules.service` | "give me the finance office email" |
+| `@campus_service` | `transport.service`, `assessment_rules.service` | "campus shuttle" |
+| `@campus_service_directory` | `campus_service_lookup.service`; canonical values are official URLs | "library" resolves to the official Library opening-hours URL |
 | `@contact_channel` | `contact.contact_channel`, `campus_service_lookup.contact_channel` | "contact student affairs by phone" |
 
 The `service` slot is required in `campus_service_lookup`. A query such as "I
@@ -56,7 +58,9 @@ service, credential, deployment, or network dependency.
   controlled response containing the official programme finder.
 - `campus_service_lookup` extracts required `service` and optional
   `contact_channel`. When `service` is absent, Dialogflow prompts the user to
-  choose a campus service before returning the official contact-directory link.
+  choose a campus service. The dedicated directory entity normalises that answer
+  to the relevant official URL; the static response uses `$service.original`
+  for the user's service name and `$service` for the official URL.
 
 After import, confirm that **Enable webhook call for this intent** is off. The
 parameters, entity annotations, required-slot prompt, welcome/fallback handling,
@@ -84,7 +88,7 @@ event, corrupt JSON, or an incomplete ZIP structure.
 After a real ES import, capture dated screenshots or screen recordings of:
 
 1. Agent settings showing **Dialogflow ES**, language and timezone.
-2. The four custom entity pages with representative values/synonyms.
+2. The five custom entity pages with representative values/synonyms.
 3. `Default Welcome Intent` showing the WELCOME event and a successful welcome
    invocation.
 4. `Default Fallback Intent` responding to at least two out-of-scope phrases.
