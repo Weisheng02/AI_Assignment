@@ -17,7 +17,7 @@ TUTOR  [TO BE PROVIDED]
 
 SUBMISSION DEADLINE  28 August 2026, before 12:00 p.m.
 
-EVALUATION SNAPSHOT  2026-08-24T18:02:56.633862
+EVALUATION SNAPSHOT  2026-08-24T20:33:22.440563
 
 # Document control and report map
 
@@ -30,8 +30,8 @@ Evidence boundary  All reported model values are read from data/evaluation_resul
 | Report builder | tools/build_final_report.py |
 | Output | AI Report - Final.docx |
 | Evaluation source | data/evaluation_results.json |
-| Evaluation generated at | 2026-08-24T18:02:56.633862 |
-| Document built at | 2026-08-24T20:25:35+08:00 |
+| Evaluation generated at | 2026-08-24T20:33:22.440563 |
+| Document built at | 2026-08-24T20:33:48+08:00 |
 | Identifying details | Member names, IDs, tutorial group, and tutor remain [TO BE PROVIDED]. |
 
 ## Report map
@@ -278,7 +278,7 @@ For usability, the Google Form uses five Likert statements rated from 1 (strongl
 | Baseline 1 (Multinomial Naïve Bayes) | Local probabilistic baseline | 0.4651 | 0.5369 | 0.4651 | 0.4419 |
 | Baseline 2 (Linear SVM) | Local support-vector baseline | 0.7674 | 0.7651 | 0.7674 | 0.7459 |
 
-Source: data/evaluation_results.json generated at 2026-08-24T18:02:56.633862. All classification metrics use the same recorded held-out split.
+Source: data/evaluation_results.json generated at 2026-08-24T20:33:22.440563. All classification metrics use the same recorded held-out split.
 
 *Figure 3: Held-out intent-classification performance by model*
 
@@ -517,7 +517,7 @@ python src/create_dialogflow_zip.py
 
 python tools/build_final_report.py
 
-Evaluation artifact: evaluation_results.json generated at 2026-08-24T18:02:56.633862. Builder output generated at 2026-08-24T20:25:35+08:00.
+Evaluation artifact: evaluation_results.json generated at 2026-08-24T20:33:22.440563. Builder output generated at 2026-08-24T20:33:48+08:00.
 
 # Appendix C. Verified user-satisfaction instrument and data
 
