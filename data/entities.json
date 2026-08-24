@@ -1,0 +1,169 @@
+{
+  "version": 1,
+  "entities": [
+    {
+      "name": "course_programme",
+      "is_overridable": true,
+      "is_enum": false,
+      "automated_expansion": false,
+      "allow_fuzzy_extraction": true,
+      "entries": [
+        {
+          "value": "computer science",
+          "synonyms": ["computer science", "computing science"]
+        },
+        {
+          "value": "information technology",
+          "synonyms": ["information technology", "IT programme", "IT course"]
+        },
+        {
+          "value": "software engineering",
+          "synonyms": ["software engineering", "software engineer programme"]
+        },
+        {
+          "value": "data science",
+          "synonyms": ["data science", "data analytics programme"]
+        },
+        {
+          "value": "accounting",
+          "synonyms": ["accounting", "accountancy"]
+        },
+        {
+          "value": "business administration",
+          "synonyms": ["business administration", "business management"]
+        },
+        {
+          "value": "mechanical engineering",
+          "synonyms": ["mechanical engineering", "mechanical engineer programme"]
+        },
+        {
+          "value": "electrical and electronics engineering",
+          "synonyms": ["electrical and electronics engineering", "electrical engineering", "electronics engineering"]
+        },
+        {
+          "value": "psychology",
+          "synonyms": ["psychology", "psychology programme"]
+        },
+        {
+          "value": "graphic design",
+          "synonyms": ["graphic design", "design programme"]
+        },
+        {
+          "value": "hospitality management",
+          "synonyms": ["hospitality management", "hotel management"]
+        },
+        {
+          "value": "quantity surveying",
+          "synonyms": ["quantity surveying", "quantity surveyor programme"]
+        }
+      ]
+    },
+    {
+      "name": "campus_service",
+      "is_overridable": true,
+      "is_enum": false,
+      "automated_expansion": false,
+      "allow_fuzzy_extraction": true,
+      "entries": [
+        {
+          "value": "admissions",
+          "synonyms": ["admissions", "admission office", "admissions department", "DACE"]
+        },
+        {
+          "value": "finance",
+          "synonyms": ["finance", "finance office", "bursary", "fee payment office"]
+        },
+        {
+          "value": "student affairs",
+          "synonyms": ["student affairs", "Department of Student Affairs", "DSA"]
+        },
+        {
+          "value": "library",
+          "synonyms": ["library", "main library"]
+        },
+        {
+          "value": "career centre",
+          "synonyms": ["career centre", "career center", "SCDC", "student career development centre"]
+        },
+        {
+          "value": "international student office",
+          "synonyms": ["international student office", "DISO", "international office"]
+        },
+        {
+          "value": "examinations",
+          "synonyms": ["examinations", "examination department", "DECA", "exam office"]
+        },
+        {
+          "value": "IT support",
+          "synonyms": ["IT support", "ICT support", "CITC", "computer support"]
+        },
+        {
+          "value": "accommodation",
+          "synonyms": ["accommodation", "hostel office", "student residence"]
+        },
+        {
+          "value": "transportation",
+          "synonyms": ["transportation", "transport service", "bus service", "university bus", "campus shuttle", "shuttle bus"]
+        }
+      ]
+    },
+    {
+      "name": "intake",
+      "is_overridable": true,
+      "is_enum": false,
+      "automated_expansion": false,
+      "allow_fuzzy_extraction": false,
+      "entries": [
+        {
+          "value": "January",
+          "synonyms": ["January", "Jan", "January intake"]
+        },
+        {
+          "value": "May",
+          "synonyms": ["May", "May intake"]
+        },
+        {
+          "value": "June",
+          "synonyms": ["June", "Jun", "June intake"]
+        },
+        {
+          "value": "September",
+          "synonyms": ["September", "Sep", "Sept", "September intake"]
+        },
+        {
+          "value": "November",
+          "synonyms": ["November", "Nov", "November intake"]
+        },
+        {
+          "value": "rolling intake",
+          "synonyms": ["rolling intake", "rolling admission"]
+        }
+      ]
+    },
+    {
+      "name": "contact_channel",
+      "is_overridable": true,
+      "is_enum": false,
+      "automated_expansion": false,
+      "allow_fuzzy_extraction": true,
+      "entries": [
+        {
+          "value": "phone",
+          "synonyms": ["phone", "telephone", "call", "phone number", "contact number"]
+        },
+        {
+          "value": "email",
+          "synonyms": ["email", "email address", "mail"]
+        },
+        {
+          "value": "WhatsApp",
+          "synonyms": ["WhatsApp", "WhatsApp number", "message"]
+        },
+        {
+          "value": "in person",
+          "synonyms": ["in person", "walk in", "visit", "counter"]
+        }
+      ]
+    }
+  ]
+}

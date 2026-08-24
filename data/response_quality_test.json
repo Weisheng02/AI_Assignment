@@ -1,0 +1,110 @@
+{
+  "protocol": "Independent reference answers authored separately from data/intents.json. Queries are held outside the training patterns. References are concise factual targets grounded in the listed official TAR UMT sources.",
+  "version": "1.0",
+  "cases": [
+    {
+      "id": "RQ01",
+      "query": "Where exactly is the main Kuala Lumpur campus?",
+      "expected_intent": "location",
+      "reference_answer": "The Kuala Lumpur Campus is located at Jalan Genting Kelang, Setapak, 53300 Kuala Lumpur. The official contact directory should be checked for current branch details and directions.",
+      "source_urls": ["https://www.tarc.edu.my/contact-us/"]
+    },
+    {
+      "id": "RQ02",
+      "query": "Which undergraduate intakes are listed for the 2026 to 2027 academic year?",
+      "expected_intent": "intake",
+      "reference_answer": "The 2026 to 2027 undergraduate calendar lists June 2026, November 2026 and January 2027 intakes. Students should verify the calendar for the selected programme.",
+      "source_urls": ["https://www.tarc.edu.my/admissions/new-student/academic-calendar/"]
+    },
+    {
+      "id": "RQ03",
+      "query": "Where can a Malaysian applicant confirm the latest programme fee?",
+      "expected_intent": "fees",
+      "reference_answer": "Programme fees vary by programme and intake. Malaysian applicants should use the current Malaysian Student Fees Guide, while international applicants should use the international fees guide.",
+      "source_urls": [
+        "https://www.tarc.edu.my/apply-and-study/fees/malaysians-student-fees/",
+        "https://www.tarc.edu.my/intfees/international-student-fees-guide-for-year-2026-intakes/"
+      ]
+    },
+    {
+      "id": "RQ04",
+      "query": "What official page explains the documents needed for a new application?",
+      "expected_intent": "admission_documents",
+      "reference_answer": "Supporting documents depend on the applicant and programme. Applicants should follow the official application and enrolment checklist for the current document requirements.",
+      "source_urls": ["https://www.tarc.edu.my/admissions/application-and-enrolment-status-enquiry/"]
+    },
+    {
+      "id": "RQ05",
+      "query": "How do I submit and track an admission application?",
+      "expected_intent": "admission",
+      "reference_answer": "Use the official TAR UMT application and enrolment guide to submit the online application, provide supporting documents, make required payments and check application status.",
+      "source_urls": ["https://www.tarc.edu.my/admissions/application-and-enrolment-status-enquiry/"]
+    },
+    {
+      "id": "RQ06",
+      "query": "How can I verify current hostel availability and charges?",
+      "expected_intent": "accommodation",
+      "reference_answer": "Hostel availability is limited and may be offered on a first come first served basis. Applicants should confirm current eligibility, room details and charges through the official accommodation or admissions information.",
+      "source_urls": [
+        "https://www.tarc.edu.my/dsa/content.jsp?cat_id=1210BF6A-BE89-49AC-B823-DC729888CB71&fmenuid=DCF6BB08-61CA-4FB4-9057-18913B3987C4",
+        "https://www.tarc.edu.my/admissions/faqs/"
+      ]
+    },
+    {
+      "id": "RQ07",
+      "query": "Where should I check the latest library opening information?",
+      "expected_intent": "library",
+      "reference_answer": "The TAR UMT Library website provides current services, facilities, contact details and opening information. Students should check it for changes and holiday closures.",
+      "source_urls": ["https://library.tarc.edu.my/"]
+    },
+    {
+      "id": "RQ08",
+      "query": "Who can help me with internships and graduate job opportunities?",
+      "expected_intent": "careers",
+      "reference_answer": "The Student Career Development Centre provides current information about career advice, internships, job opportunities and career fairs.",
+      "source_urls": ["https://scdcstu.tarc.edu.my/"]
+    },
+    {
+      "id": "RQ09",
+      "query": "How do I find my examination period and detailed exam timetable?",
+      "expected_intent": "exam_schedule",
+      "reference_answer": "Use the official academic calendar to find the examination period for the applicable programme and intake, then check the Student Intranet for the detailed timetable.",
+      "source_urls": ["https://www.tarc.edu.my/admissions/new-student/academic-calendar/"]
+    },
+    {
+      "id": "RQ10",
+      "query": "Where can I see the latest scholarships and financial aid conditions?",
+      "expected_intent": "scholarship",
+      "reference_answer": "Scholarship, bursary, grant and loan criteria can change. Students should review the official Financial Aid page and the current terms before applying.",
+      "source_urls": ["https://www.tarc.edu.my/dsa/financial-aid/financial-aid/"]
+    },
+    {
+      "id": "RQ11",
+      "query": "How can a student find current clubs and societies?",
+      "expected_intent": "clubs_societies",
+      "reference_answer": "Club and society availability varies by campus and semester. Students should check the Department of Student Affairs information or contact DSA through the official directory.",
+      "source_urls": ["https://www.tarc.edu.my/dsa/"]
+    },
+    {
+      "id": "RQ12",
+      "query": "Where can I confirm sports facility rules and booking details?",
+      "expected_intent": "sports",
+      "reference_answer": "Sports facilities, booking rules, rates and operating hours may change. Students should consult the current official sports rules or contact the Department of Student Affairs.",
+      "source_urls": ["https://www.tarc.edu.my/files/dsa/7BE77EC5-DA21-4AD7-92AE-3717934D5004.pdf"]
+    },
+    {
+      "id": "RQ13",
+      "query": "Where is the current university shuttle timetable published?",
+      "expected_intent": "transport",
+      "reference_answer": "University bus routes and schedules can change by semester and day. Students should check the Department of Student Affairs bus service page for the current route, stops and timetable.",
+      "source_urls": ["https://www.tarc.edu.my/dsa/a/transportation/university-college-bus-service/"]
+    },
+    {
+      "id": "RQ14",
+      "query": "Who should I ask about the minimum mark and an assessment appeal?",
+      "expected_intent": "assessment_rules",
+      "reference_answer": "Passing and grading rules can vary by programme and course. Registered students should check the applicable academic regulations and Student Intranet, while the Examination FAQ explains assessment result review procedures.",
+      "source_urls": ["https://examination.tarc.edu.my/examination-services/faqs"]
+    }
+  ]
+}

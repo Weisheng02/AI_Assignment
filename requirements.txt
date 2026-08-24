@@ -1,0 +1,12 @@
+# Bounded to the versions exercised by the assignment test suite.
+streamlit>=1.50.0,<1.51
+scikit-learn>=1.6.1,<1.7
+nltk>=3.9.2,<3.10
+pandas>=2.3.3,<2.4
+numpy>=2.0.2,<2.1
+matplotlib>=3.9.4,<3.10
+seaborn>=0.13.2,<0.14
+rouge-score>=0.1.2,<0.2
+
+# WordNet is NLTK data rather than a pip package. For full lemmatization run:
+# python -m nltk.downloader wordnet omw-1.4

@@ -1,0 +1,95 @@
+帮我再检查我的 report里面，还有哪些地方需要diagram的？然后我的dialogflow里面的setting的screenshot要放在哪里呢？老师的PDF有说吗？/
+17:34
+Let's also search for methodology rubric requirements in extracted_ai_assignment_pdf.txt. Line 435 in PDF rubric says: Methodology: Missing or Unacceptable / Poor / Accomplished / Good
+
+Accomplished: "Methodology is well-explained with clear system flow, dataset description, algorithm, and evaluation metrics."
+Good (16-20 marks): "Methodology is comprehensive, logical, and clearly presented. Dataset, algorithms, and metrics are justified and appropriate for the study."
+Let's inspect the AI Report.docx sections to see where diagrams currently are and where they should be placed:
+
+Question 1: 哪些地方需要 Diagram (图表/流程图)？
+Let's check what diagrams are currently in AI Report.docx and where new diagrams should be placed:
+
+Section 3.1: System Flowchart / Activity Diagram (必不可少):
+
+必须有一个 System Flowchart / Architecture Diagram（展现系统架构：User Query -> NLTK Preprocessing -> Model Selection (Member 1 Dialogflow / Member 2 TF-IDF+LR) -> Intent Matching & Confidence Threshold (0.20) -> Fallback Logging / Response Output）。
+目前 3.1 有 image1.png（你可以确认一下图片是否清晰展现了全系统的 Activity Diagram）。
+Section 3.2: Dataset Class Distribution Diagram (推荐增加):
+
+展现 35 个 intent topic 的 pattern 数量条形图（类似于 Streamlit 里的 Tab 3: Inquiry Data Analytics 图表），帮助说明数据集的类别分布（EDA）。
+Section 4.1: Model Performance Benchmark Comparison Chart (强烈推荐增加):
+
+展现 4 个模型（Dialogflow, TF-IDF+LR, Naïve Bayes, Linear SVM）在 Accuracy, Precision, Recall, F1, BLEU, ROUGE-1 上的条形对比图（即 Streamlit Tab 2 里的 Seaborn 彩色对比图）。
+在 Table 1 下面放这张图 (Figure 2: Empirical Performance Metrics Comparison Bar Chart)，能极大地提高 Results & Discussion 节的视觉冲击力（Rubric: "Results are comprehensive, well-presented"）。
+Section 4.1: Streamlit Web UI & Active Learning GUI Screenshots (建议增加):
+
+展示网页系统界面 (Tab 1 聊天界面、Tab 2 评估看板、Tab 4 Active Learning 异常问题审核界面) 的截图，作为系统已运行和实现的证据。
+Question 2: Dialogflow 的 Setting / GUI 截图应该放在哪里？老师的 PDF 有说明吗？
+老师的 PDF 说明：
+在 PDF 的 Title 5 Chatbot Development -> Requirement e (Platform-based development) 中明确写着：
+"Use the platform's GUI or APIs to configure intents, entities, and responses."
+
+老师的 Assessment Rubric (Appendix 1) 的 Methodology (20%) 和 Results/System implementation (20%) 要求学生证明自己确实在平台（Dialogflow）上完成了配置。
+截图的最佳摆放位置：
+有两个最佳位置：
+
+首选位置：Section 3.3 Algorithm Selection (3.3 节 Member 1 云端 Agent 配置说明处)：
+
+在 3.3 节写 Member 1 (Dialogflow ES) 的配置过程时，紧接着嵌入 Figure: Google Dialogflow Console Agent & Intent Configuration Screenshots（展示在 Dialogflow Console 里配置 Intent Tag、Training Phrases 和 Responses 的界面截图）。
+好处：这直接证明了 Member 1 确实使用 GUI 独立配置了 Dialogflow 平台！
+备选位置：Appendix A (附录 A: Dialogflow Platform Setup Screenshots)：
+
+如果不想让正文显得图片过多，可以在 Report 结尾（Plagiarism 表格之前）增加一个 Appendix A: Dialogflow Agent Console Configuration，把 Dialogflow console 页面、Intents 列表、Agent settings 截图放进去，并在正文 3.3 节引用：“(See Appendix A for Dialogflow Console configuration screenshots)”。
+让我们将这个清晰、有条理的建议整理成一份直观的清单回复给用户！为你详细解答这两个关乎分数的核心问题：
+
+1. 📊 Report 里还需要哪些 Diagram (图表)？
+为了拿到 Methodology (20分) 和 Results & Discussion (20分) 的 Good/Excellent 满分档，建议你的 Report 中包含以下 4 张核心图表：
+
+序号	所在章节	建议图表内容 (Diagram / Figure)	作用与 Rubric 对齐
+1	Section 3.1	System Flowchart / Activity Diagram (系统流程图)	【硬性要求】 展示用户输入 ➡️ NLTK 预处理 ➡️ 模型选择 (Member 1/2) ➡️ 意图匹配与 0.20 阈值判断 ➡️ 输出/未识别日志的完整流程。
+2	Section 3.2	Dataset Topic Distribution Chart (数据集类别分布图)	【加分项】 展现 35 个 Intent 類别的 Pattern 数量分布条形图（即 Streamlit 中 Tab 3 Analytics 的条形图截图）。
+3	Section 4.1	Model Metric Comparison Chart (4模型性能对比图)	【强烈推荐】 在 Table 1 下方放上 Streamlit 中 Tab 2 的 4 模型 6 指标彩色对比柱状图。老师看报告时一眼就能看到漂亮的实验对比图！
+4	Section 4.1	Web System Prototype Screenshots (系统 UI 截图)	【加分项】 放置 Streamlit 聊天框、模型切换 sidebar、Active Learning 管理界面的截图，证明 Prototype 完整且可用。
+2. 📸 Dialogflow 的 Setting / Console 截图要放在哪里？老师的 PDF 有说吗？
+老师 PDF 的规定：
+PDF 在 Title 5 (Chatbot Development) 的 Requirement e 中明确写道：
+"Use the platform’s GUI or APIs to configure intents, entities, and responses."
+
+老师要求学生证明自己确实在 Google Dialogflow 的 GUI 界面上完成了 Intent 和 Responses 的配置。
+截图放置的最佳位置：
+你有 2 个标准位置 可以放：
+
+位置 1：正文 Section 3.3 Algorithm Selection（最推荐 👍）
+
+在 3.3 节介绍 Member 1 (Google Dialogflow ES) 时，直接在段落下方嵌入截图，命名为 Figure X: Google Dialogflow Console Agent & Intent Configuration。
+截图内容推荐：
+Dialogflow Console 里的 Intents 列表页面（展示配置好的 intents 标签）。
+某一个 Intent（如 fees 或 course）的编辑页面（展示 Training phrases 和 Text Response）。
+优势：阅卷老师在看 3.3 算法说明时，直接就能看到 Member 1 在云端 GUI 上的配置证据，Methodology 容易拿高分！
+位置 2：报告末尾附录 Appendix A（备选 ✌️）
+
+如果正文空间有限，可以在报告最末尾（Plagiarism 表格前）建立一个 Appendix A: Dialogflow Platform Setup Screenshots。
+然后在正文 3.3 节写上一句：(Refer to Appendix A for Dialogflow Console GUI configuration screenshots)。
+💡 总结建议： 把 Dialogflow 控制台截图 直接贴在 Section 3.3 中，并在 Section 4.1 贴上 Streamlit 的 Seaborn 柱状对比图，你的 Report 就会显得非常专业且图文并茂！
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+📍 创新点融入在 Template 的具体位置：
+放在 1.4 Significance / Contribution of the Study（项目贡献）：
+我已将 6 大创新点的概述段落融合进了 1.4 节的第二段中，作为本项目在工程实现上的核心贡献（Significance）。
+放在 3.3 Algorithm selection（算法与机制描述）：
+解释 Member 2 的分类算法时，详细说明了置信度阈值 (0.20 threshold)、未识别问题收集 (unrecognized_queries.json) 和主动学习 (Active Learning) 机制。
+放在 4.1 Results（实验结果与测试输出）：
+展示了模型对比表 (Table 1)、满意度问卷表 (Table 2)，以及把 auto_tester.py 的测试日志作为自动化集成测试结果放进 4.1 节结尾。
+放在 5.1 Achievements（项目成就总结）：
+总结成就时列出了成功开发主动学习回路、情感分析、多维度 BLEU/ROUGE 指标及自动化健康测试。

@@ -1,0 +1,860 @@
+{
+  "version": 2,
+  "scope": "TAR UMT university inquiry prototype. Time-sensitive answers route users to official primary sources.",
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": [
+        "Hi",
+        "How are you?",
+        "Is anyone there?",
+        "Hello",
+        "Good day",
+        "What's up",
+        "how are ya",
+        "heyy",
+        "whatsup",
+        "morning"
+      ],
+      "responses": [
+        "Hello! I can help you find official TAR UMT information about programmes, admissions, fees, intakes, accommodation and campus services. What would you like to know?"
+      ],
+      "context_set": "",
+      "dialogflow": {
+        "display_name": "Default Welcome Intent",
+        "events": [
+          "WELCOME"
+        ]
+      }
+    },
+    {
+      "tag": "goodbye",
+      "patterns": [
+        "cya",
+        "see you",
+        "bye bye",
+        "See you later",
+        "Goodbye",
+        "I am Leaving",
+        "Bye",
+        "Have a Good day",
+        "talk to you later",
+        "ttyl",
+        "i got to go",
+        "gtg",
+        "I have to go"
+      ],
+      "responses": [
+        "Goodbye! Please verify any time-sensitive details on the official TAR UMT website before acting on them: https://www.tarc.edu.my/"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "creator",
+      "patterns": [
+        "what is the name of your developers",
+        "what is the name of your creators",
+        "what is the name of the developers",
+        "what is the name of the creators",
+        "who created you",
+        "your developers",
+        "your creators",
+        "who are your developers",
+        "developers",
+        "you are made by",
+        "you are made by whom",
+        "who create you",
+        "creators",
+        "who made you",
+        "who designed you"
+      ],
+      "responses": [
+        "This is a student-built AI assignment prototype. The team members and their individual contributions should be identified in the project report and presentation."
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "bot_identity",
+      "patterns": [
+        "your name",
+        "do you have a name",
+        "what are you called",
+        "what is your name",
+        "what should I call you",
+        "whats your name?",
+        "what are you",
+        "who are you",
+        "who is this",
+        "what am i chatting to",
+        "who am i taking to",
+        "are you an official university chatbot"
+      ],
+      "responses": [
+        "I am the TAR UMT University Inquiry Chatbot prototype for a student AI project. I am not an official university service, so please confirm important details through the official links I provide."
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "office_hours",
+      "patterns": [
+        "timing of college",
+        "what is college timing",
+        "working days",
+        "when are you guys open",
+        "what are your hours",
+        "hours of operation",
+        "when is the college open",
+        "college timing",
+        "what about college timing",
+        "is college open on saturday",
+        "tell something about college timing",
+        "what is the college  hours"
+      ],
+      "responses": [
+        "The official Admissions contact page currently lists its opening hours and should be checked for changes or public-holiday closures: https://www.tarc.edu.my/admissions/contact-us/"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "contact",
+      "patterns": [
+        "contact info",
+        "how to contact college",
+        "college telephone number",
+        "college number",
+        "What is your contact no",
+        "Contact number?",
+        "how to call you",
+        "College phone no?",
+        "how can i contact you",
+        "Can i get your phone number",
+        "how can i call you",
+        "phone number",
+        "phone no"
+      ],
+      "responses": [
+        "Use TAR UMT's official contact directory for the current phone, email, WhatsApp and campus-specific details: https://www.tarc.edu.my/contact-us/ Admissions enquiries are also listed at https://www.tarc.edu.my/admissions/contact-us/"
+      ],
+      "context_set": "",
+      "parameters": [
+        {
+          "name": "contact_channel",
+          "entity": "@contact_channel",
+          "required": false,
+          "is_list": false,
+          "prompts": []
+        }
+      ],
+      "dialogflow": {
+        "action": "contact.channel.select"
+      }
+    },
+    {
+      "tag": "course",
+      "patterns": [
+        "list of courses",
+        "list of courses offered",
+        "list of courses offered in",
+        "what are the courses offered in your college?",
+        "courses?",
+        "courses offered",
+        "courses offered in university",
+        "courses you offer",
+        "courses available at university?",
+        "what are the courses in university?",
+        "what are courses in university?",
+        "can you tell me the courses available in university?",
+        "computer engineering?",
+        "Information Technology",
+        "AI/Ml",
+        "Mechanical engineering",
+        "Chemical engineering",
+        "Civil engineering",
+        "what degrees or diplomas do you have",
+        "major options",
+        "what programmes does TAR UMT offer"
+      ],
+      "responses": [
+        "Programme availability, campus and intake can change. Please use TAR UMT's official Programme Offered A-Z directory and open the selected programme page for current details: https://www.tarc.edu.my/admissions/programmes/programme-offered-a-z/undergraduate-programme/"
+      ],
+      "context_set": "",
+      "parameters": [
+        {
+          "name": "programme",
+          "entity": "@course_programme",
+          "required": false,
+          "is_list": false,
+          "prompts": []
+        },
+        {
+          "name": "intake",
+          "entity": "@intake",
+          "required": false,
+          "is_list": false,
+          "prompts": []
+        }
+      ],
+      "dialogflow": {
+        "action": "programme.lookup",
+        "webhook_used": true,
+        "webhook_for_slot_filling": false
+      }
+    },
+    {
+      "tag": "fees",
+      "patterns": [
+        "information about fee",
+        "information on fee",
+        "tell me the fee",
+        "college fee",
+        "fee per semester",
+        "what is the fee of each semester",
+        "what is the fees of each year",
+        "what is fee",
+        "what is the fees",
+        "how much is the fees",
+        "fees for first year",
+        "fees",
+        "about the fees",
+        "tell me something about the fees",
+        "how much does it cost",
+        "tuition cost",
+        "price per semester",
+        "how much is the tuition fee",
+        "online fee payment methods",
+        "pay tuition through online banking",
+        "how can I pay university fees"
+      ],
+      "responses": [
+        "Programme fees depend on programme, student category and intake, and TAR UMT states that fees may change. Check the current official Malaysian guide at https://www.tarc.edu.my/bursary/malaysian-student-fees-guide/ or the international guide at https://www.tarc.edu.my/intfees/international-student-fees-guide-for-year-2026-intakes/"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "location",
+      "patterns": [
+        "where is the college located",
+        "college is located at",
+        "where is college",
+        "where is college located",
+        "address of college",
+        "how to reach college",
+        "college location",
+        "college address",
+        "wheres the college",
+        "how can I reach college",
+        "whats is the college address",
+        "what is the address of college"
+      ],
+      "responses": [
+        "The official directory lists the Kuala Lumpur Campus at Jalan Genting Kelang, Setapak, 53300 Kuala Lumpur. Confirm the address and branch-campus contacts here: https://www.tarc.edu.my/contact-us/"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "accommodation",
+      "patterns": [
+        "hostel facility",
+        "hostel service",
+        "hostel location",
+        "hostel address",
+        "hostel facilities",
+        "hostel fees",
+        "Does college provide hostel",
+        "Is there any hostel",
+        "Where is hostel",
+        "do you have hostel",
+        "do you guys have hostel",
+        "hostel",
+        "hostel capacity",
+        "what is the hostel fee",
+        "how to get in hostel",
+        "what is the hostel address",
+        "how far is hostel from college",
+        "hostel college distance",
+        "where is the hostel",
+        "how big is the hostel",
+        "distance between college and hostel",
+        "distance between hostel and college",
+        "Where can I sleep on campus?",
+        "Where can I stay on campus?",
+        "sleep on campus",
+        "student accommodation",
+        "dormitory",
+        "dorm facilities",
+        "places to sleep"
+      ],
+      "responses": [
+        "Accommodation availability, eligibility, room type and charges can change. Check TAR UMT's official Kuala Lumpur accommodation page and confirm the current terms before applying: https://www.tarc.edu.my/dsa/a/accommodation/accommodation-kl-main-campus/"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "events",
+      "patterns": [
+        "events organised",
+        "list of events",
+        "list of events organised in college",
+        "list of events conducted in college",
+        "What events are conducted in college",
+        "Are there any event held at college",
+        "Events?",
+        "what are the events",
+        "tell me about events",
+        "what about events"
+      ],
+      "responses": [
+        "Event dates change frequently. Please check TAR UMT's official bulletin and the relevant faculty or department announcement page for the latest notice: https://www.tarc.edu.my/bulletin.jsp"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "admission_documents",
+      "patterns": [
+        "document to bring",
+        "documents needed for admission",
+        "documents needed at the time of admission",
+        "documents needed during admission",
+        "documents required for admission",
+        "documents required at the time of admission",
+        "documents required during admission",
+        "What document are required for admission",
+        "Which document to bring for admission",
+        "documents",
+        "what documents do i need",
+        "what documents do I need for admission",
+        "documents needed",
+        "what documents are required for admission"
+      ],
+      "responses": [
+        "Required documents depend on the applicant and programme. Follow TAR UMT's official How to Apply checklist rather than a generic list: https://www.tarc.edu.my/admissions/a/application-and-enrolment-status-enquiry/"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "campus_map",
+      "patterns": [
+        "size of campus",
+        "building size",
+        "How many floors does college have",
+        "floors in college",
+        "how tall is university engineering building",
+        "floors",
+        "show me the campus map",
+        "where is a campus building",
+        "how do I find a block",
+        "directions inside the Kuala Lumpur campus",
+        "which building is the library in",
+        "how do I navigate the campus",
+        "map of the Setapak campus",
+        "location of campus blocks",
+        "where is Block A",
+        "find a lecture hall"
+      ],
+      "responses": [
+        "A TAR UMT-hosted Kuala Lumpur campus map is available as an orientation reference, but buildings and services may have changed. Verify the destination through the current KL campus page: https://www.tarc.edu.my/kl/index.jsp"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "timetable_syllabus",
+      "patterns": [
+        "Syllabus for IT",
+        "what is the Information Technology syllabus",
+        "syllabus",
+        "timetable",
+        "what is IT syllabus"
+      ],
+      "responses": [
+        "Registered students should check the Student Intranet for their timetable and consult the faculty for the current syllabus or course outline. Official new-student guidance: https://www.tarc.edu.my/admissions/new-student/general-information/"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "library",
+      "patterns": [
+        "is there any library",
+        "library facility",
+        "library facilities",
+        "do you have library",
+        "does the college have library facility",
+        "college library",
+        "where can i get books",
+        "book facility",
+        "Where is library",
+        "Library",
+        "Library information",
+        "Library books information",
+        "Tell me about library",
+        "how many libraries"
+      ],
+      "responses": [
+        "The official TAR UMT Library site lists current services and facilities. Check its live opening-hours page before visiting: https://library.tarc.edu.my/about-us/opening-hours"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "facilities",
+      "patterns": [
+        "how is college infrastructure",
+        "infrastructure",
+        "college infrastructure",
+        "What facilities college provide",
+        "College facility",
+        "What are college facilities",
+        "facilities",
+        "facilities provided",
+        "what campus facilities are available",
+        "tell me about learning facilities",
+        "does the campus have computer labs",
+        "are there study spaces",
+        "what services are available to students"
+      ],
+      "responses": [
+        "Facilities differ by campus and can change. Start with the official campus map and confirm availability with the responsible TAR UMT department: https://www.tarc.edu.my/contact-us/"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "canteen",
+      "patterns": [
+        "food facilities",
+        "canteen facilities",
+        "canteen facility",
+        "is there any canteen",
+        "Is there a cafeteria in college",
+        "Does college have canteen",
+        "Where is canteen",
+        "where is cafeteria",
+        "canteen",
+        "Food",
+        "Cafeteria",
+        "food menu",
+        "food in canteen",
+        "Whats there on menu",
+        "what is available in college canteen",
+        "what foods can we get in college canteen",
+        "food variety",
+        "What is there to eat?",
+        "is there a campus cafeteria"
+      ],
+      "responses": [
+        "Food outlets, menus and operating hours can change. Check TAR UMT Department of Student Affairs' official Food and Beverage page for the current listing: https://www.tarc.edu.my/dsa/food-and-beverage/"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "careers",
+      "patterns": [
+        "What is college placement",
+        "Which companies visit in college",
+        "What is average package",
+        "companies visit",
+        "About placement",
+        "placement",
+        "does TAR UMT provide career support"
+      ],
+      "responses": [
+        "TAR UMT's Student Career Development Centre provides the official current information on career advice, internships, job opportunities and career fairs: https://scdcstu.tarc.edu.my/"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "university_leadership",
+      "patterns": [
+        "what is the name of principal",
+        "what is the principal name",
+        "principal name",
+        "Who is college principal",
+        "Where is principal's office",
+        "principal",
+        "name of principal"
+      ],
+      "responses": [
+        "University leadership can change. Check TAR UMT's official President page and staff directory rather than relying on a stored name: https://www.tarc.edu.my/tarc-umt/president-welcome-message/"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "exam_schedule",
+      "patterns": [
+        "exam dates",
+        "exam schedule",
+        "When is semester exam",
+        "Semester exam timetable",
+        "when is exam",
+        "exam timetable",
+        "when are the semester examinations"
+      ],
+      "responses": [
+        "Exam periods depend on programme and intake. Use the official Academic Calendar, then check the Student Intranet for your detailed timetable: https://www.tarc.edu.my/admissions/new-student/academic-calendar/"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "assessment_rules",
+      "patterns": [
+        "what is the passing mark for my course",
+        "how is my subject graded",
+        "where can I find the grading scale",
+        "what are the assessment regulations",
+        "how do I request a review of my result",
+        "can I appeal an assessment grade",
+        "what is the final result remark procedure",
+        "what score is required to pass a module",
+        "where are academic assessment rules published",
+        "who should I contact about an examination result",
+        "score needed to pass a module",
+        "how are university assessments graded"
+      ],
+      "responses": [
+        "Passing and grading rules can vary by programme, course and applicable academic regulations, so this prototype does not claim one universal passing mark. Registered students should check the current rules and results notices in the Student Intranet; TAR UMT's official Examination FAQ explains assessment-result reviews and related procedures: https://examination.tarc.edu.my/examination-services/faqs"
+      ],
+      "context_set": "",
+      "parameters": [
+        {
+          "name": "service",
+          "entity": "@campus_service",
+          "required": false,
+          "is_list": false,
+          "prompts": []
+        }
+      ],
+      "dialogflow": {
+        "action": "assessment.rules.lookup"
+      }
+    },
+    {
+      "tag": "admission",
+      "patterns": [
+        "what is the process of admission",
+        "what is the admission process",
+        "How to take admission in your college",
+        "What is the process for admission",
+        "admission",
+        "admission process",
+        "begin an online application",
+        "where do prospective students submit an application",
+        "I am ready to apply online",
+        "how can I start my university application",
+        "where do I check programme entry criteria",
+        "how do I apply for university admission",
+        "entry requirements for diploma applicants",
+        "programme admission requirements",
+        "minimum entry criteria for a diploma",
+        "entry requirements for diploma courses"
+      ],
+      "responses": [
+        "Follow TAR UMT's official application and enrolment guide for the current steps, supporting documents, payment and status enquiry: https://www.tarc.edu.my/admissions/a/application-and-enrolment-status-enquiry/"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "scholarship",
+      "patterns": [
+        "scholarship",
+        "Is scholarship available",
+        "scholarship engineering",
+        "scholarship it",
+        "available scholarships",
+        "scholarship for computer engineering",
+        "list of scholarship",
+        "first year scholarship"
+      ],
+      "responses": [
+        "Scholarship, grant, bursary and loan criteria and opening status may change. Check TAR UMT's live official Scholarships and Grants page before applying: https://www.tarc.edu.my/dsa/financial-aid/scholarships-grants/"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "intake",
+      "patterns": [
+        "when is the next intake",
+        "what intake dates are available",
+        "January intake information",
+        "is there a May intake",
+        "when does the June intake start",
+        "September intake commencement date",
+        "is the November intake open",
+        "which intake should I apply for",
+        "undergraduate intake calendar",
+        "programme commencement dates",
+        "TAR UMT intakes",
+        "intake month",
+        "when can new students enrol"
+      ],
+      "responses": [
+        "Intakes vary by level and programme, so a single fixed list can be misleading. Check TAR UMT's live intake page and then the applicable official Academic Calendar: https://dace.tarc.edu.my/programmes/intakes"
+      ],
+      "context_set": "",
+      "parameters": [
+        {
+          "name": "intake",
+          "entity": "@intake",
+          "required": false,
+          "is_list": false,
+          "prompts": []
+        }
+      ],
+      "dialogflow": {
+        "action": "intake.calendar.lookup"
+      }
+    },
+    {
+      "tag": "dress_code",
+      "patterns": [
+        "college dress code",
+        "college dresscode",
+        "what is the uniform",
+        "can we wear casuals",
+        "Does college have an uniform",
+        "Is there any uniform",
+        "uniform",
+        "what about uniform",
+        "do we have to wear uniform"
+      ],
+      "responses": [
+        "Attire requirements can depend on the programme, laboratory, event or placement. Consult TAR UMT's current official dress-code page and your faculty rather than relying on a generic rule: https://www.tarc.edu.my/dsa/contentsub.jsp?cat_id=3F86463C-2727-456C-AC7D-44A833E590A6&fmenuid="
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "clubs_societies",
+      "patterns": [
+        "what are the different committee in college",
+        "different committee in college",
+        "Are there any committee in college",
+        "Give me committee details",
+        "committee",
+        "how many committee are there in college",
+        "join a student club",
+        "find a university society",
+        "student organisation information",
+        "become a member of a student society"
+      ],
+      "responses": [
+        "Club and society availability varies by campus and semester. Check TAR UMT Department of Student Affairs' official clubs and societies listing: https://www.tarc.edu.my/dsa/contentsub.jsp?cat_id=BB59517D-5141-4726-A32B-4293FE854DEB&fmenuid=424F47AF-637B-44EC-AFB3-3B4DF0861DAC"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "smalltalk_affection",
+      "patterns": [
+        "I love you",
+        "Will you marry me",
+        "Do you love me"
+      ],
+      "responses": [
+        "I am a university inquiry chatbot prototype, but I am happy to help with TAR UMT programmes, admissions, fees or campus services."
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "abusive_language",
+      "patterns": [
+        "fuck",
+        "bitch",
+        "shut up",
+        "hell",
+        "stupid",
+        "idiot",
+        "dumb ass",
+        "asshole",
+        "fucker"
+      ],
+      "responses": [
+        "Please keep the conversation respectful. I can still help with a university-related question if you rephrase it."
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "semester_break",
+      "patterns": [
+        "holidays",
+        "when will semester starts",
+        "when will semester end",
+        "when is the holidays",
+        "list of holidays",
+        "Holiday in these year",
+        "holiday list",
+        "about vacations",
+        "about holidays",
+        "When is vacation",
+        "When is holidays",
+        "how long will be the vacation"
+      ],
+      "responses": [
+        "Semester and holiday dates depend on programme and intake. Use the official TAR UMT Academic Calendar for the applicable cohort: https://www.tarc.edu.my/admissions/new-student/academic-calendar/"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "transport",
+      "patterns": [
+        "is there a university shuttle bus",
+        "where can I find the bus schedule",
+        "which bus route goes to campus",
+        "TAR UMT transport service",
+        "shuttle routes near the campus",
+        "when does the campus bus run",
+        "transport from the LRT station",
+        "where is the university bus stop",
+        "student bus timetable",
+        "how do I use the campus shuttle",
+        "shuttle from the LRT to campus",
+        "current university bus routes"
+      ],
+      "responses": [
+        "University bus routes and schedules can change by semester and day. Check TAR UMT Department of Student Affairs' official bus-service page for the current route and timetable rather than relying on a stored time: https://www.tarc.edu.my/dsa/a/transportation/university-college-bus-service/"
+      ],
+      "context_set": "",
+      "parameters": [
+        {
+          "name": "service",
+          "entity": "@campus_service",
+          "required": false,
+          "is_list": false,
+          "prompts": []
+        }
+      ],
+      "dialogflow": {
+        "action": "transport.service.lookup"
+      }
+    },
+    {
+      "tag": "sports",
+      "patterns": [
+        "sports and games",
+        "give sports details",
+        "sports infrastructure",
+        "sports facilities",
+        "information about sports",
+        "Sports activities",
+        "please provide sports and games information",
+        "where is the gym",
+        "fitness facilities on campus",
+        "book a sports venue",
+        "campus fitness centre",
+        "does the campus have a fitness centre",
+        "campus sports or gym facilities"
+      ],
+      "responses": [
+        "Sports facilities, booking rules, rates and hours can change. Check TAR UMT Department of Student Affairs' live official sports-facilities page: https://www.tarc.edu.my/dsa/contentsub.jsp?cat_id=5A2E4500-18D3-48FA-83FE-1374A4FA6C74&fmenuid=57844F48-0FC8-412E-A113-8FA4CA6FBC17"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "thanks",
+      "patterns": [
+        "okk",
+        "okie",
+        "nice work",
+        "well done",
+        "good job",
+        "thanks for the help",
+        "Thank You",
+        "its ok",
+        "Thanks",
+        "Good work"
+      ],
+      "responses": [
+        "You are welcome! Is there another TAR UMT topic I can help you find an official source for?"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "capabilities",
+      "patterns": [
+        "what can you do",
+        "what are the thing you can do",
+        "things you can do",
+        "what can u do for me",
+        "how u can help me",
+        "why i should use you"
+      ],
+      "responses": [
+        "I can route questions about TAR UMT programmes, admissions, fees, intakes, accommodation, calendars and campus services to relevant official sources. I do not replace confirmation from the University."
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "safety_conduct",
+      "patterns": [
+        "ragging",
+        "is ragging practice active in college",
+        "does college have any antiragging facility",
+        "is there any ragging cases",
+        "is ragging done here",
+        "antiragging facility",
+        "ragging juniors",
+        "ragging history",
+        "ragging incidents"
+      ],
+      "responses": [
+        "For conduct or safety concerns, consult the current official Student Code of Conduct and contact the appropriate University office. If there is immediate danger, contact local emergency services. Official code: https://www.tarc.edu.my/files/dsa/CD2F46FC-2B88-4ED6-97F2-4F30CB6E4052.pdf"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "department_head",
+      "patterns": [
+        "hod",
+        "hod name",
+        "who is the hod",
+        "Who is HOD",
+        "Where is HOD",
+        "it hod",
+        "name of it hod"
+      ],
+      "responses": [
+        "Faculty and department leadership can change. Use TAR UMT's official staff directory and select the relevant faculty or department: https://www.tarc.edu.my/staffDirectory.jsp"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "campus_service_lookup",
+      "patterns": [
+        "how do I contact admissions",
+        "give me the finance office email",
+        "what is the library phone number",
+        "I need the student affairs WhatsApp",
+        "where is the international student office",
+        "contact the examinations department",
+        "how can I reach IT support",
+        "who handles accommodation enquiries",
+        "I need help from a campus service",
+        "show me the career centre contact",
+        "contact student affairs by phone",
+        "email the library",
+        "WhatsApp admissions department"
+      ],
+      "responses": [
+        "I could not complete the live directory lookup. Please use TAR UMT's official contact page for the latest department and channel details: https://www.tarc.edu.my/contact-us/"
+      ],
+      "context_set": "",
+      "parameters": [
+        {
+          "name": "service",
+          "entity": "@campus_service",
+          "required": true,
+          "is_list": false,
+          "prompts": [
+            "Which campus service do you need, such as Admissions, Finance, Library or Student Affairs?"
+          ]
+        },
+        {
+          "name": "contact_channel",
+          "entity": "@contact_channel",
+          "required": false,
+          "is_list": false,
+          "prompts": []
+        }
+      ],
+      "dialogflow": {
+        "action": "campus.service.lookup",
+        "webhook_used": true,
+        "webhook_for_slot_filling": false
+      }
+    }
+  ]
+}

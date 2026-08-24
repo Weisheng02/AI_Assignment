@@ -1,0 +1,20 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+myenv/
+venv/
+.venv/
+tmp/
+output/
+.streamlit/secrets.toml
+data/user_feedback.json
+data/unrecognized_queries.json
+data/user_feedback_unverified_sample.json
+
+# Generated submission/archive and superseded UI captures
+AI Assignment - Source Code.zip
+report_assets/app_chatbot_demo.png
+report_assets/app_chatbot_demo_desktop.png
